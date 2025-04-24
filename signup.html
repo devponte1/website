@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Sign Up</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 20px;
+      background-color: #f4f4f9;
+    }
+
+    h1 {
+      color: #333;
+    }
+
+    input {
+      width: 100%;
+      padding: 10px;
+      margin: 10px 0;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+    }
+
+    button {
+      padding: 10px 20px;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #45a049;
+    }
+
+    #backend-message {
+      position: fixed;
+      bottom: 10px;
+      left: 10px;
+      background-color: rgba(0, 0, 0, 0.7);
+      color: white;
+      padding: 5px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Create an Account</h1>
+  <form id="signup-form">
+    <input type="text" id="username" placeholder="Username" required><br>
+    <input type="password" id="password" placeholder="Password" required><br>
+    <button type="submit">Sign Up</button>
+  </form>
+
+  <p id="backend-message">Loading backend message...</p>
+
+  <script>
+    fetch('https://website.loca.lt/api/hello')
+      .then(res => res.text())
+      .then(data => {
+        document.getElementById('backend-message').textContent = data;
+      })
+      .catch(() => {
+        document.getElementById('backend-message').textContent = 'Backend not reachable';
+      });
+
+    document.getElementById('signup-form').addEventListener('submit', function(event) {
+      event.preventDefault();
+
+      const username = document.getElementById('username').value;
+      const password = document.getElementById('password').value;
+      const userData = { username, password };
+
+      fetch('https://website.loca.lt/api/signup', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(userData),
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (data.success) {
+          alert('Account created successfully!');
+          window.location.href = '/'; // Redirect to homepage
+        } else {
+          alert(data.message || 'Signup failed.');
+        }
+      })
+      .catch(err => {
+        console.error('Error:', err);
+        alert('An error occurred. Please try again.');
+      });
+    });
+  </script>
+</body>
+</html>

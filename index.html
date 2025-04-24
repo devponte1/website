@@ -1,10 +1,34 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Sign Up</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Home</title>
   <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+      background-color: #f4f4f9;
+    }
+
+    h1 {
+      color: #333;
+    }
+
+    a {
+      display: inline-block;
+      margin-top: 15px;
+      padding: 10px 20px;
+      background-color: #007bff;
+      color: white;
+      text-decoration: none;
+      border-radius: 5px;
+    }
+
+    a:hover {
+      background-color: #0056b3;
+    }
+
     #backend-message {
       position: fixed;
       bottom: 10px;
@@ -16,44 +40,21 @@
   </style>
 </head>
 <body>
-  <h1>Create an Account</h1>
-  <form id="signup-form">
-    <input type="text" id="username" placeholder="Username" required><br>
-    <input type="password" id="password" placeholder="Password" required><br>
-    <button type="submit">Sign Up</button>
-  </form>
+  <h1>Welcome to the Homepage</h1>
+  <p>This is a simple landing page for your site.</p>
+  <a href="signup.html">Go to Sign Up</a>
 
   <p id="backend-message">Loading backend message...</p>
 
   <script>
-    // Display the backend message in the corner
-    fetch('https://website.loca.lt/api/hello')  <!-- ← updated line for backend message -->
+    fetch('https://website.loca.lt/api/hello')
       .then(res => res.text())
       .then(data => {
         document.getElementById('backend-message').textContent = data;
+      })
+      .catch(() => {
+        document.getElementById('backend-message').textContent = 'Backend not reachable';
       });
-
-    // Handle sign up form submission
-    document.getElementById('signup-form').addEventListener('submit', function(event) {
-      event.preventDefault();
-
-      const username = document.getElementById('username').value;
-      const password = document.getElementById('password').value;
-
-      const userData = { username, password };
-
-      fetch('https://website.loca.lt/api/signup', {  // Change this to your actual backend URL
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(userData),
-      })
-      .then(res => res.json())
-      .then(data => {
-        console.log(data);
-        alert('Account created successfully!');
-      })
-      .catch(err => console.error('Error:', err));
-    });
   </script>
 </body>
 </html>
