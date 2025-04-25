@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Profile</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="profile-container">
+    <h1 id="profile-username">Loading...</h1>
+
+    <div class="profile-section">
+      <label for="description">About:</label>
+      <textarea id="description" rows="4" placeholder="Write something about yourself..."></textarea>
+      <br />
+      <button id="save-description">Save</button>
+      <p id="save-status" style="color: green;"></p>
+    </div>
+  </div>
+
+  <script>
+    // Extract username from URL
+    const pathParts = window.location.pathname.split('/');
+    const username = pathParts[pathParts.length - 1];
+    document.getElementById('profile-username').textContent = username;
+
+    // Load description from server
+    fetch(`https://website.loca.lt/api/user/${username}`)
+      .then(res => res.json())
+      .then(data => {
+        if (data.success) {
+          document.getElementById('description').value = data.description || '';
+        } else {
+          alert('User not found!');
+        }
+      });
+
+    // Save new description
+    document.getElementById('save-description').addEventListener('click', () => {
+      const desc = document.getElementById('description').value;
+
+      fetch(`https://website.loca.lt/api/user/${username}/description`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ description: desc })
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (data.success) {
+          document.getElementById('save-status').textContent = 'Description saved!';
+        } else {
+          alert('Failed to save.');
+        }
+      });
+    });
+  </script>
+</body>
+</html>

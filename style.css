@@ -25,7 +25,7 @@ body {
     background-color: #bbbbbb;
   }
   
-  input {
+  input, textarea {
     width: 100%;
     padding: 8px;
     margin: 10px 0;
@@ -33,6 +33,7 @@ body {
     border: 1px solid #999;
     background-color: #f9f9f9;
     color: #000;
+    font-family: inherit;
   }
   
   button {
@@ -74,5 +75,34 @@ body {
   
   #userboard li:last-child {
     border-bottom: none;
+  }
+  
+  /* Profile Page Specific Styles */
+  #profile-username {
+    font-size: 24px;
+    font-weight: bold;
+    margin-top: 20px;
+  }
+  
+  textarea {
+    width: 100%;
+    padding: 8px;
+    margin: 10px 0;
+    border-radius: 0;
+    border: 1px solid #999;
+    background-color: #f9f9f9;
+    color: #000;
+    font-family: inherit;
+    resize: vertical;
+  }
+  
+  #save-description {
+    margin-top: 10px;
+  }
+  
+  #save-status {
+    font-size: 14px;
+    color: green;
+    margin-top: 5px;
   }
   

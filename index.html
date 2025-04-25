@@ -49,7 +49,7 @@
         document.getElementById('backend-message').textContent = data;
       })
       .catch(() => {
-        document.getElementById('backend-message').textContent = 'Backend not reachable';
+        document.getElementById('backend-message').textContent = 'Backend not reachable - Server might be offline.';
       });
 
     // Fetch users for userboard
@@ -79,7 +79,7 @@
       })
       .catch(err => {
         console.error('Fetch error:', err);
-        document.getElementById('userboard').textContent = 'Error fetching users.';
+        document.getElementById('userboard').textContent = 'Error fetching users. - Server might be offline.';
       });
   </script>
 </body>
