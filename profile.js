@@ -3,32 +3,43 @@ window.onload = function () {
     const usernameElement = document.getElementById("username");
     const descriptionElement = document.getElementById("description");
     
-    // Get the username from the URL
     const urlParams = new URLSearchParams(window.location.search);
     const username = urlParams.get("username");
-  
-    if (!username) {
-      alert("No username provided in URL.");
-      return;
-    }
-  
-    // Set the profile page title to the username
-    document.title = `${username}'s Profile`;
 
-    // Fetch the user data from the API
-    fetch(`/api/users/${username}/profile`)
-      .then((response) => response.json())
-      .then((data) => {
-        if (data.error) {
-          profileContainer.innerHTML = `<p>Error: ${data.error}</p>`;
-        } else {
-          // Populate the HTML with the user data
-          usernameElement.textContent = data.username;
-          descriptionElement.textContent = data.description || "No description provided.";
-        }
-      })
-      .catch((error) => {
-        console.error("Error fetching user profile:", error);
-        profileContainer.innerHTML = `<p>Failed to load profile.</p>`;
-      });
+    if (!username) {
+        profileContainer.innerHTML = "No username provided!";
+        return;
+    }
+
+    usernameElement.innerText = username;
+
+    fetch(`https://website.loca.lt/api/users/${username}/profile`)
+        .then(response => response.json())
+        .then(data => {
+            if (data.username) {
+                descriptionElement.value = data.description || "";
+            } else {
+                profileContainer.innerHTML = "User not found!";
+            }
+        });
+
+    document.getElementById("save-description").addEventListener("click", () => {
+        const newDescription = descriptionElement.value;
+
+        fetch(`https://website.loca.lt/api/profile/${username}`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ description: newDescription }),
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert("Description updated!");
+            } else {
+                alert("Error updating description.");
+            }
+        });
+    });
 };

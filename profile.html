@@ -20,27 +20,25 @@
   </div>
 
   <script>
-    // Extract username from the URL query parameters
     const urlParams = new URLSearchParams(window.location.search);
-    const username = urlParams.get('username'); // Get the username parameter
+    const username = urlParams.get('username');
 
     if (!username) {
       document.body.innerHTML = ''; // Blank screen if no username is provided
       return;
     }
 
-    // Set the title of the page to the username
     document.title = `${username}'s Profile`;
 
     document.getElementById('profile-username').textContent = username;
 
-    // Fetch user profile from the server using the username
+    // Fetch user profile
     fetch(`https://website.loca.lt/api/users/${username}/profile`)
       .then(res => res.json())
       .then(data => {
         if (data.username) {
           document.getElementById('profile-username').textContent = data.username;
-          document.getElementById('description').value = data.description || ''; // Populate description
+          document.getElementById('description').value = data.description || '';
         } else {
           alert('User not found!');
         }
@@ -50,7 +48,6 @@
         alert('Error loading profile!');
       });
 
-    // Save new description
     document.getElementById('save-description').addEventListener('click', () => {
       const desc = document.getElementById('description').value;
 
