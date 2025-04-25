@@ -1,4 +1,3 @@
-// profile.js
 window.onload = function () {
     const profileContainer = document.getElementById("profile-container");
     const usernameElement = document.getElementById("username");
@@ -13,6 +12,9 @@ window.onload = function () {
       return;
     }
   
+    // Set the profile page title to the username
+    document.title = `${username}'s Profile`;
+
     // Fetch the user data from the API
     fetch(`/api/users/${username}`)
       .then((response) => response.json())
@@ -29,5 +31,4 @@ window.onload = function () {
         console.error("Error fetching user profile:", error);
         profileContainer.innerHTML = `<p>Failed to load profile.</p>`;
       });
-  };
-  
+};
