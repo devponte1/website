@@ -4,40 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Home</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      padding: 20px;
-      background-color: #f4f4f9;
-    }
-
-    h1 {
-      color: #333;
-    }
-
-    a {
-      display: inline-block;
-      margin-top: 15px;
-      padding: 10px 20px;
-      background-color: #007bff;
-      color: white;
-      text-decoration: none;
-      border-radius: 5px;
-    }
-
-    a:hover {
-      background-color: #0056b3;
-    }
-
-    #backend-message {
-      position: fixed;
-      bottom: 10px;
-      left: 10px;
-      background-color: rgba(0, 0, 0, 0.7);
-      color: white;
-      padding: 5px;
-    }
-  </style>
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
   <h1>Welcome to the Homepage</h1>
@@ -54,6 +21,30 @@
       })
       .catch(() => {
         document.getElementById('backend-message').textContent = 'Backend not reachable';
+      });
+  </script>
+
+  <h2>Userboard</h2>
+  <ul id="userboard"></ul>
+
+  <script>
+    fetch('/api/users')
+      .then(res => res.json())
+      .then(data => {
+        if (data.success) {
+          const board = document.getElementById('userboard');
+          board.innerHTML = '';
+          data.users.forEach((user, index) => {
+            const li = document.createElement('li');
+            li.textContent = `${index + 1}. ${user.username}`;
+            board.appendChild(li);
+          });
+        } else {
+          console.error('Failed to load users');
+        }
+      })
+      .catch(err => {
+        console.error('Fetch error:', err);
       });
   </script>
 </body>
