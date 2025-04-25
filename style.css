@@ -1,71 +1,75 @@
 body {
     font-family: Arial, sans-serif;
     padding: 20px;
-    background-color: #f4f4f9;
+    background-color: #ffffff;
     margin: 0;
+    color: #000;
   }
   
   h1 {
-    color: #333;
+    color: #000;
   }
   
   a {
     display: inline-block;
     margin-top: 15px;
-    padding: 10px 20px;
-    background-color: #007bff;
-    color: white;
+    padding: 8px 16px;
+    background-color: #cccccc;
+    color: #000;
     text-decoration: none;
-    border-radius: 5px;
+    border: 1px solid #999999;
+    border-radius: 0;
   }
   
   a:hover {
-    background-color: #0056b3;
+    background-color: #bbbbbb;
   }
   
   input {
     width: 100%;
-    padding: 10px;
+    padding: 8px;
     margin: 10px 0;
-    border-radius: 5px;
-    border: 1px solid #ccc;
+    border-radius: 0;
+    border: 1px solid #999;
+    background-color: #f9f9f9;
+    color: #000;
   }
   
   button {
-    padding: 10px 20px;
-    background-color: #4CAF50;
-    color: white;
-    border: none;
-    border-radius: 5px;
+    padding: 8px 16px;
+    background-color: #e0e0e0;
+    color: #000;
+    border: 1px solid #999;
+    border-radius: 0;
     cursor: pointer;
   }
   
   button:hover {
-    background-color: #45a049;
+    background-color: #d0d0d0;
   }
   
   #backend-message {
     position: fixed;
     bottom: 10px;
     left: 10px;
-    background-color: rgba(0, 0, 0, 0.7);
-    color: white;
+    background-color: #e0e0e0;
+    color: #000;
     padding: 5px;
+    border: 1px solid #999;
   }
   
   #userboard {
     list-style: none;
     padding: 0;
     margin-top: 15px;
-    background: white;
-    border: 1px solid #ccc;
-    border-radius: 8px;
+    background: #fff;
+    border: 1px solid #999;
     max-width: 300px;
   }
   
   #userboard li {
     padding: 10px;
-    border-bottom: 1px solid #eee;
+    border-bottom: 1px solid #ccc;
   }
   
   #userboard li:last-child {
