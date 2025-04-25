@@ -16,7 +16,7 @@ window.onload = function () {
     document.title = `${username}'s Profile`;
 
     // Fetch the user data from the API
-    fetch(`/api/users/${username}`)
+    fetch(`/api/users/${username}/profile`)
       .then((response) => response.json())
       .then((data) => {
         if (data.error) {
