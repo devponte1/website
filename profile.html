@@ -20,9 +20,15 @@
   </div>
 
   <script>
-    // Extract username from the URL path
+    // Extract username from the URL
     const pathParts = window.location.pathname.split('/');
     const username = pathParts[pathParts.length - 1]; // Last part of the path is the username
+
+    if (username === 'profile') {
+      alert('Please provide a valid username.');
+      window.location.href = '/'; // Redirect to homepage or another page if necessary
+    }
+
     document.getElementById('profile-username').textContent = username;
 
     // Fetch user profile from the server using the username
