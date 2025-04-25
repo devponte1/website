@@ -7,14 +7,42 @@
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
+
+  <!-- Top Right User Info -->
+  <div style="position: absolute; top: 10px; right: 20px;">
+    <span id="user-info"></span>
+    <button id="logout-btn" style="display: none;">Log Out</button>
+  </div>
+
   <h1>Welcome to the Homepage</h1>
   <p>This is a simple landing page for your site.</p>
-  <a href="signup.html">Go to Sign Up</a>
+  <a href="signup.html">Go to Sign Up</a> |
+  <a href="login.html">Go to Log In</a>
 
   <p id="backend-message">Loading backend message...</p>
 
+  <h2>Userboard</h2>
+  <ul id="userboard"></ul>
+
   <script>
-    // Fetch backend message for testing
+    // Handle user display and logout
+    const userInfo = document.getElementById('user-info');
+    const logoutBtn = document.getElementById('logout-btn');
+
+    const user = localStorage.getItem('loggedInUser');
+    if (user) {
+      userInfo.textContent = `Logged in as ${user}`;
+      logoutBtn.style.display = 'inline';
+    } else {
+      userInfo.innerHTML = `<a href="login.html">Log In</a>`;
+    }
+
+    logoutBtn.addEventListener('click', () => {
+      localStorage.removeItem('loggedInUser');
+      location.reload();
+    });
+
+    // Fetch backend test message
     fetch('https://website.loca.lt/api/hello')
       .then(res => res.text())
       .then(data => {
@@ -23,23 +51,17 @@
       .catch(() => {
         document.getElementById('backend-message').textContent = 'Backend not reachable';
       });
-  </script>
 
-  <h2>Userboard</h2>
-  <ul id="userboard"></ul>
-
-  <script>
-    // Fetch users from the API
+    // Fetch users for userboard
     fetch('https://website.loca.lt/api/users')
       .then(res => res.json())
       .then(data => {
-        console.log('Received data:', data);  // Debugging: Log the response
+        console.log('Received data:', data);
 
         if (data.success) {
           const board = document.getElementById('userboard');
-          board.innerHTML = '';  // Clear any existing content
+          board.innerHTML = '';
 
-          // Check if the 'users' array exists and has content
           if (data.users && Array.isArray(data.users)) {
             data.users.forEach((user, index) => {
               const li = document.createElement('li');
@@ -48,7 +70,7 @@
             });
           } else {
             console.error('No users found or invalid data format.');
-            document.getElementById('userboard').textContent = 'No users found.';
+            board.textContent = 'No users found.';
           }
         } else {
           console.error('Failed to load users');
