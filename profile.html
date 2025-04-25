@@ -20,11 +20,11 @@
   </div>
 
   <script>
-    // Extract username from the URL
+    // Extract username from the URL path
     const pathParts = window.location.pathname.split('/');
     const username = pathParts[pathParts.length - 1]; // Last part of the path is the username
 
-    if (username === 'profile') {
+    if (!username || username === 'profile') {
       alert('Please provide a valid username.');
       window.location.href = '/'; // Redirect to homepage or another page if necessary
     }
@@ -51,6 +51,9 @@
     document.getElementById('save-description').addEventListener('click', () => {
       const desc = document.getElementById('description').value;
 
+      document.getElementById('save-description').disabled = true;
+      document.getElementById('save-status').textContent = 'Saving...';
+
       fetch(`https://website.loca.lt/api/profile/${username}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -58,6 +61,7 @@
       })
       .then(res => res.json())
       .then(data => {
+        document.getElementById('save-description').disabled = false;
         if (data.success) {
           document.getElementById('save-status').textContent = 'Description saved!';
         } else {
@@ -67,6 +71,7 @@
       .catch(err => {
         console.error('Error saving description:', err);
         alert('Error saving description!');
+        document.getElementById('save-description').disabled = false;
       });
     });
   </script>
