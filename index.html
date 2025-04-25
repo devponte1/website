@@ -14,6 +14,7 @@
   <p id="backend-message">Loading backend message...</p>
 
   <script>
+    // Fetch backend message for testing
     fetch('https://website.loca.lt/api/hello')
       .then(res => res.text())
       .then(data => {
@@ -28,23 +29,35 @@
   <ul id="userboard"></ul>
 
   <script>
-    fetch('/api/users')
+    // Fetch users from the API
+    fetch('https://website.loca.lt/api/users')
       .then(res => res.json())
       .then(data => {
+        console.log('Received data:', data);  // Debugging: Log the response
+
         if (data.success) {
           const board = document.getElementById('userboard');
-          board.innerHTML = '';
-          data.users.forEach((user, index) => {
-            const li = document.createElement('li');
-            li.textContent = `${index + 1}. ${user.username}`;
-            board.appendChild(li);
-          });
+          board.innerHTML = '';  // Clear any existing content
+
+          // Check if the 'users' array exists and has content
+          if (data.users && Array.isArray(data.users)) {
+            data.users.forEach((user, index) => {
+              const li = document.createElement('li');
+              li.textContent = `${index + 1}. ${user.username}`;
+              board.appendChild(li);
+            });
+          } else {
+            console.error('No users found or invalid data format.');
+            document.getElementById('userboard').textContent = 'No users found.';
+          }
         } else {
           console.error('Failed to load users');
+          document.getElementById('userboard').textContent = 'Failed to load users.';
         }
       })
       .catch(err => {
         console.error('Fetch error:', err);
+        document.getElementById('userboard').textContent = 'Error fetching users.';
       });
   </script>
 </body>
