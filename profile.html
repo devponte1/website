@@ -20,27 +20,32 @@
   </div>
 
   <script>
-    // Extract username from URL
+    // Extract username from the URL path
     const pathParts = window.location.pathname.split('/');
-    const username = pathParts[pathParts.length - 1];
+    const username = pathParts[pathParts.length - 1]; // Last part of the path is the username
     document.getElementById('profile-username').textContent = username;
 
-    // Load description from server
-    fetch(`https://website.loca.lt/api/user/${username}`)
+    // Fetch user profile from the server using the username
+    fetch(`https://website-devponte1s-projects.vercel.app/api/users/${username}`)
       .then(res => res.json())
       .then(data => {
-        if (data.success) {
-          document.getElementById('description').value = data.description || '';
+        if (data.username) {
+          document.getElementById('profile-username').textContent = data.username;
+          document.getElementById('description').value = data.description || ''; // Populate description
         } else {
           alert('User not found!');
         }
+      })
+      .catch(err => {
+        console.error('Error fetching user profile:', err);
+        alert('Error loading profile!');
       });
 
     // Save new description
     document.getElementById('save-description').addEventListener('click', () => {
       const desc = document.getElementById('description').value;
 
-      fetch(`https://website.loca.lt/api/user/${username}/description`, {
+      fetch(`https://website-devponte1s-projects.vercel.app/api/profile/${username}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ description: desc })
@@ -50,8 +55,12 @@
         if (data.success) {
           document.getElementById('save-status').textContent = 'Description saved!';
         } else {
-          alert('Failed to save.');
+          alert('Failed to save description.');
         }
+      })
+      .catch(err => {
+        console.error('Error saving description:', err);
+        alert('Error saving description!');
       });
     });
   </script>
