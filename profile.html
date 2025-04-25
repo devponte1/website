@@ -26,7 +26,7 @@
     document.getElementById('profile-username').textContent = username;
 
     // Fetch user profile from the server using the username
-    fetch(`https://website-devponte1s-projects.vercel.app/api/users/${username}`)
+    fetch(`https://website.loca.lt/api/users/${username}`)
       .then(res => res.json())
       .then(data => {
         if (data.username) {
@@ -45,7 +45,7 @@
     document.getElementById('save-description').addEventListener('click', () => {
       const desc = document.getElementById('description').value;
 
-      fetch(`https://website-devponte1s-projects.vercel.app/api/profile/${username}`, {
+      fetch(`https://website.loca.lt/api/profile/${username}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ description: desc })
