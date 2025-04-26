@@ -2,32 +2,20 @@ window.onload = function () {
     const profileContainer = document.getElementById("profile-container");
     const usernameElement = document.getElementById("username");
     const descriptionElement = document.getElementById("description");
-    const usersListContainer = document.getElementById("users-list");
 
-    const urlParams = new URLSearchParams(window.location.search);
-    let username = urlParams.get("username");
+    // Function to get the username from the URL path
+    function getUsernameFromPath() {
+        const path = window.location.pathname; // Gets the full path e.g. '/profile.html/johndoe'
+        const username = path.split('/').pop(); // Gets the last part of the path, which will be the username
+        return username;
+    }
 
-    // If no username in the URL, fetch all users
-    if (!username) {
-        fetch("https://website.loca.lt/api/users") // Assuming this is your users API endpoint
-            .then(response => response.json())
-            .then(data => {
-                if (data.success && data.users.length > 0) {
-                    const users = data.users;
-                    let usersHTML = "<ul>";
-                    users.forEach(user => {
-                        usersHTML += `<li><a href="?username=${user.username}">${user.username}</a></li>`;
-                    });
-                    usersHTML += "</ul>";
-                    usersListContainer.innerHTML = usersHTML;
-                } else {
-                    usersListContainer.innerHTML = "No users found!";
-                }
-            });
-    } else {
-        // If username is provided, fetch user profile
-        usernameElement.innerText = username;
+    const username = getUsernameFromPath();
 
+    if (username) {
+        usernameElement.innerText = username; // Display the username in the profile
+
+        // Fetch user profile data based on username
         fetch(`https://website.loca.lt/api/users/${username}/profile`)
             .then(response => response.json())
             .then(data => {
@@ -36,8 +24,13 @@ window.onload = function () {
                 } else {
                     profileContainer.innerHTML = "User not found!";
                 }
+            })
+            .catch(error => {
+                console.error("Error fetching profile:", error);
+                profileContainer.innerHTML = "Error loading profile!";
             });
 
+        // Save the description when the user clicks the button
         document.getElementById("save-description").addEventListener("click", () => {
             const newDescription = descriptionElement.value;
 
@@ -57,5 +50,7 @@ window.onload = function () {
                 }
             });
         });
+    } else {
+        profileContainer.innerHTML = "No username provided!";
     }
 };
