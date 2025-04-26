@@ -86,9 +86,9 @@ button:hover {
 
 
 #login-form, #signup-form {
-  display: flex;
-  flex-direction: column;
-  width: 300px; /* or whatever you want */
+  width: 250px; /* Fixed width inside the form */
+  padding: 8px;
+  margin: 10px 0;
 }
 
 
