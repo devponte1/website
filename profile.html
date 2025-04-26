@@ -7,8 +7,8 @@
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <div class="profile-container">
-    <h1 id="profile-username">Loading...</h1>
+  <div id="profile-container" class="profile-container">
+    <h1 id="username">Loading...</h1>
 
     <div class="profile-section">
       <label for="description">About:</label>
@@ -19,56 +19,6 @@
     </div>
   </div>
 
-  <script>
-    const urlParams = new URLSearchParams(window.location.search);
-    const username = urlParams.get('username');
-
-    if (!username) {
-      document.body.innerHTML = ''; // Blank screen if no username is provided
-      return;
-    }
-
-    document.title = `${username}'s Profile`;
-
-    document.getElementById('profile-username').textContent = username;
-
-    // Fetch user profile
-    fetch(`https://website.loca.lt/api/users/${username}/profile`)
-      .then(res => res.json())
-      .then(data => {
-        if (data.username) {
-          document.getElementById('profile-username').textContent = data.username;
-          document.getElementById('description').value = data.description || '';
-        } else {
-          alert('User not found!');
-        }
-      })
-      .catch(err => {
-        console.error('Error fetching user profile:', err);
-        alert('Error loading profile!');
-      });
-
-    document.getElementById('save-description').addEventListener('click', () => {
-      const desc = document.getElementById('description').value;
-
-      fetch(`https://website.loca.lt/api/profile/${username}`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ description: desc })
-      })
-      .then(res => res.json())
-      .then(data => {
-        if (data.success) {
-          document.getElementById('save-status').textContent = 'Description saved!';
-        } else {
-          alert('Failed to save description.');
-        }
-      })
-      .catch(err => {
-        console.error('Error saving description:', err);
-        alert('Error saving description!');
-      });
-    });
-  </script>
+  <script src="profile.js"></script> <!-- Load external profile.js -->
 </body>
 </html>
