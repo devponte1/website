@@ -15,43 +15,20 @@
   </div>
 
   <h1>Home</h1>
-  <p>welcome to my website!</p>
+  <p>Welcome to my website!</p>
   <a href="signup.html">Sign up</a> |
-  <a href="login.html">Log in</a>
+  <a href="login.html">Log in</a> |
 
-  <p id="backend-message">loading backend message...</p>
-
-  <h2>every user on this website:</h2>
+  <h2>Every user on this website:</h2>
   <ul id="userboard"></ul>
 
+  <!-- Backend Message -->
+  <p id="backend-message">Loading backend message...</p>
+
+  <!-- Link to external JavaScript file for user info -->
+  <script src="userinfo.js"></script>
+
   <script>
-    // Handle user display and logout
-    const userInfo = document.getElementById('user-info');
-    const logoutBtn = document.getElementById('logout-btn');
-
-    const user = localStorage.getItem('loggedInUser');
-    if (user) {
-      userInfo.textContent = `Logged in as ${user}`;
-      logoutBtn.style.display = 'inline';
-    } else {
-      userInfo.innerHTML = `<a href="login.html">Log In</a>`;
-    }
-
-    logoutBtn.addEventListener('click', () => {
-      localStorage.removeItem('loggedInUser');
-      location.reload();
-    });
-
-    // Fetch backend test message
-    fetch('https://website.loca.lt/api/hello')
-      .then(res => res.text())
-      .then(data => {
-        document.getElementById('backend-message').textContent = data;
-      })
-      .catch(() => {
-        document.getElementById('backend-message').textContent = 'Backend not reachable - Server might be offline.';
-      });
-
     // Fetch users for userboard
     fetch('https://website.loca.lt/api/users')
       .then(res => res.json())
@@ -81,6 +58,17 @@
         console.error('Fetch error:', err);
         document.getElementById('userboard').textContent = 'Error fetching users. - Server might be offline.';
       });
+
+    // Fetch backend test message
+    fetch('https://website.loca.lt/api/hello')
+      .then(res => res.text())
+      .then(data => {
+        document.getElementById('backend-message').textContent = data;
+      })
+      .catch(() => {
+        document.getElementById('backend-message').textContent = 'Backend not reachable - Server might be offline.';
+      });
   </script>
+
 </body>
 </html>
