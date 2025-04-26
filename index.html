@@ -8,28 +8,48 @@
 </head>
 <body>
 
-  <!-- This is where the global UI will be injected -->
-  <div id="global-ui-container"></div>
+  <!-- Top Right User Info -->
+  <div style="position: absolute; top: 10px; right: 20px;">
+    <span id="user-info"></span>
+    <button id="logout-btn" style="display: none;">Log Out</button>
+  </div>
 
   <h1>Home</h1>
-  <p>Welcome to my website!</p>
+  <p>welcome to my website!</p>
   <a href="signup.html">Sign up</a> |
-  <a href="login.html">Log in</a> |
+  <a href="login.html">Log in</a>
 
-  <h2>Every user on this website:</h2>
+  <p id="backend-message">loading backend message...</p>
+
+  <h2>every user on this website:</h2>
   <ul id="userboard"></ul>
 
-  <script src="userinfo.js"></script>
-
   <script>
-    // Load the global UI (user info, logout button, backend message) from globalUI.html
-    fetch('globalUI.html')
-      .then(response => response.text())
+    // Handle user display and logout
+    const userInfo = document.getElementById('user-info');
+    const logoutBtn = document.getElementById('logout-btn');
+
+    const user = localStorage.getItem('loggedInUser');
+    if (user) {
+      userInfo.textContent = `Logged in as ${user}`;
+      logoutBtn.style.display = 'inline';
+    } else {
+      userInfo.innerHTML = `<a href="login.html">Log In</a>`;
+    }
+
+    logoutBtn.addEventListener('click', () => {
+      localStorage.removeItem('loggedInUser');
+      location.reload();
+    });
+
+    // Fetch backend test message
+    fetch('https://website.loca.lt/api/hello')
+      .then(res => res.text())
       .then(data => {
-        document.getElementById('global-ui-container').innerHTML = data;
+        document.getElementById('backend-message').textContent = data;
       })
-      .catch(err => {
-        console.error('Error loading global UI:', err);
+      .catch(() => {
+        document.getElementById('backend-message').textContent = 'Backend not reachable - Server might be offline.';
       });
 
     // Fetch users for userboard
@@ -62,6 +82,5 @@
         document.getElementById('userboard').textContent = 'Error fetching users. - Server might be offline.';
       });
   </script>
-
 </body>
 </html>
