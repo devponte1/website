@@ -12,7 +12,7 @@ window.onload = function () {
 
     // Function to fetch profile data
     function fetchProfileData(username) {
-        fetch(`https://api.example.com/users/${username}/profile`)
+        fetch(`https://website.loca.lt/users/${username}/profile`)
             .then(response => response.json())
             .then(data => {
                 if (data.username) {
@@ -37,7 +37,7 @@ window.onload = function () {
     // Handle the Save Description button
     document.getElementById("save-description").addEventListener("click", () => {
         const newDescription = descriptionElement.value;
-        fetch(`https://api.example.com/users/${username}/update-description`, {
+        fetch(`https://website.local.lt/${username}/update-description`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
