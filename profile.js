@@ -1,56 +1,57 @@
 window.onload = function () {
-    const profileContainer = document.getElementById("profile-container");
+    const profileContent = document.getElementById("profile-content");
     const usernameElement = document.getElementById("username");
     const descriptionElement = document.getElementById("description");
 
-    // Function to get the username from the URL path
-    function getUsernameFromPath() {
-        const path = window.location.pathname; // Gets the full path e.g. '/profile.html/johndoe'
-        const username = path.split('/').pop(); // Gets the last part of the path, which will be the username
-        return username;
+    // Function to extract username from URL
+    function getUsernameFromURL() {
+        const path = window.location.pathname; // e.g. /profile.html/johndoe
+        const parts = path.split('/');  // Split the path into parts
+        return parts[parts.length - 1]; // Get the last part, which is the username
     }
 
-    const username = getUsernameFromPath();
-
-    if (username) {
-        usernameElement.innerText = username; // Display the username in the profile
-
-        // Fetch user profile data based on username
-        fetch(`https://website.loca.lt/api/users/${username}/profile`)
+    // Function to fetch profile data
+    function fetchProfileData(username) {
+        fetch(`https://api.example.com/users/${username}/profile`)
             .then(response => response.json())
             .then(data => {
                 if (data.username) {
-                    descriptionElement.value = data.description || "";
+                    usernameElement.innerText = data.username;
+                    descriptionElement.value = data.description || "No description provided";
                 } else {
-                    profileContainer.innerHTML = "User not found!";
+                    profileContent.innerHTML = "Profile not found!";
                 }
             })
             .catch(error => {
                 console.error("Error fetching profile:", error);
-                profileContainer.innerHTML = "Error loading profile!";
+                profileContent.innerHTML = "Error loading profile!";
             });
-
-        // Save the description when the user clicks the button
-        document.getElementById("save-description").addEventListener("click", () => {
-            const newDescription = descriptionElement.value;
-
-            fetch(`https://website.loca.lt/api/profile/${username}`, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({ description: newDescription }),
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    alert("Description updated!");
-                } else {
-                    alert("Error updating description.");
-                }
-            });
-        });
-    } else {
-        profileContainer.innerHTML = "No username provided!";
     }
+
+    // Set the username from the URL and load the profile
+    const username = getUsernameFromURL();
+    if (username) {
+        fetchProfileData(username);
+    }
+
+    // Handle the Save Description button
+    document.getElementById("save-description").addEventListener("click", () => {
+        const newDescription = descriptionElement.value;
+        fetch(`https://api.example.com/users/${username}/update-description`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ description: newDescription })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert("Description updated!");
+            } else {
+                alert("Error updating description.");
+            }
+        })
+        .catch(error => console.error("Error saving description:", error));
+    });
 };

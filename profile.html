@@ -1,24 +1,18 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Profile</title>
-  <link rel="stylesheet" href="style.css" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Profile</title>
 </head>
 <body>
-  <div id="profile-container" class="profile-container">
-    <h1 id="username">Loading...</h1>
-
-    <div class="profile-section">
-      <label for="description">About:</label>
-      <textarea id="description" rows="4" placeholder="Write something about yourself..."></textarea>
-      <br />
-      <button id="save-description">Save</button>
-      <p id="save-status" style="color: green;"></p>
+    <h1 id="profile-title">Profile</h1>
+    <div id="profile-content">
+        <p id="username">Loading...</p>
+        <textarea id="description"></textarea>
+        <button id="save-description">Save Description</button>
     </div>
-  </div>
 
-  <script src="profile.js"></script> <!-- Load external profile.js -->
+    <script src="profile.js"></script>
 </body>
 </html>
