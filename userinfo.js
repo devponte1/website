@@ -20,12 +20,4 @@ logoutBtn.addEventListener('click', () => {
   location.reload();
 });
 
-// Fetch and display the backend message
-fetch('https://website.loca.lt/api/hello')  // Make sure this API is correct for your backend
-  .then(res => res.text())  // Assuming the backend message is a plain text response
-  .then(data => {
-    backendMessage.textContent = data;  // Display the backend message
-  })
-  .catch(() => {
-    backendMessage.textContent = 'Backend not reachable - Server might be offline.';
-  });
+

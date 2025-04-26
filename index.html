@@ -20,7 +20,7 @@
   <ul id="userboard"></ul>
 
   <script src="userinfo.js"></script>
-  
+
   <script>
     // Load the global UI (user info, logout button, backend message) from globalUI.html
     fetch('globalUI.html')
@@ -61,7 +61,6 @@
         console.error('Fetch error:', err);
         document.getElementById('userboard').textContent = 'Error fetching users. - Server might be offline.';
       });
-      
   </script>
 
 </body>

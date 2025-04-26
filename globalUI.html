@@ -1,3 +1,4 @@
+<!-- globalUI.html -->
 <head>
     <link rel="stylesheet" href="style.css" />
   </head>
@@ -15,14 +16,16 @@
   <script src="userinfo.js"></script>
   
   <script>
-    // Fetch backend test message
-    fetch('https://website.loca.lt/api/hello')
-      .then(res => res.text())
-      .then(data => {
-        document.getElementById('backend-message').textContent = data;
-      })
-      .catch(() => {
-        document.getElementById('backend-message').textContent = 'Backend not reachable - Server might be offline.';
-      });
+    // Fetch backend message after global UI has loaded
+    window.addEventListener('load', () => {
+      fetch('https://website.loca.lt/api/hello')
+        .then(res => res.text())
+        .then(data => {
+          document.getElementById('backend-message').textContent = data;
+        })
+        .catch(() => {
+          document.getElementById('backend-message').textContent = 'Backend not reachable - Server might be offline.';
+        });
+    });
   </script>
   
