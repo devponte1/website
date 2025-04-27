@@ -29,7 +29,7 @@ fetch('https://website.loca.lt/api/hello')
     document.getElementById('backend-message').textContent = 'Backend not reachable - Server might be offline.';
   });
 
-// Fetch users for userboard
+// Fetch users for userboard 
 fetch('https://website.loca.lt/api/users')
   .then(res => res.json())
   .then(data => {
