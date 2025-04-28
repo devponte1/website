@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Signup</title>
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+  <h1>Signup</h1>
+  <form id="signup-form">
+    <input type="text" name="username" placeholder="Username" required>
+    <br>
+    <input type="password" name="password" placeholder="Password" required>
+    <br>
+    <button type="submit">Sign Up</button>
+  </form>
+
+  <script>
+    document.getElementById('signup-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const username = e.target.username.value;
+      const password = e.target.password.value;
+
+      const res = await fetch('https://website.loca.lt/api/signup', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username, password }),
+      });
+
+      const data = await res.json();
+      if (data.success) {
+        alert('Signup successful!');
+        window.location.href = '/auth/login'; // Redirect to login
+      } else {
+        alert('Signup failed: ' + data.error);
+      }
+    });
+  </script>
+</body>
+</html>
