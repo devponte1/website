@@ -4,10 +4,10 @@ import mysql from 'mysql2/promise';
 export async function GET() {
   try {
     const db = await mysql.createConnection({
-      host: 'localhost',
-      user: 'root',
-      password: 'IlikesleepP123',
-      database: 'websiteDatabase',
+      host: process.env.MYSQL_HOST,
+      user: process.env.MYSQL_USER,
+      password: process.env.MYSQL_PASSWORD,
+      database: process.env.MYSQL_DATABASE,
     });
 
     const [rows] = await db.query('SELECT id, username FROM users');

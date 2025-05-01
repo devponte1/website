@@ -1,11 +1,24 @@
-// app/home/page.js
-export default function HomePage() {
+// app/page.js
+
+export default async function HomePage() {
+    const res = await fetch('https://website.loca.lt/users', {
+      cache: 'no-store',
+    });
+    const data = await res.json();
+    const users = data.users || [];
+  
     return (
       <div>
-        <title>Home</title>
         <h1>Home</h1>
-        <p>welcome to my new website.</p>
+        <a href="/signup">Sign Up</a>
+  
+        <h2>every user on this website</h2>
+        <ul id="userboard">
+          {users.map((u) => (
+            <li key={u.id}>{u.username}</li>
+          ))}
+        </ul>
       </div>
-    )
+    );
   }
   
