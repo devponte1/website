@@ -1,4 +1,5 @@
 // app/signup/page.js
+
 'use client';
 
 import { useState } from 'react';
@@ -24,8 +25,8 @@ export default function SignupPage() {
 
     if (res.ok) {
       setStatus('Account created! Logging in...');
-
-      // Store the token after signup
+      
+      // Store the token in cookies
       document.cookie = `token=${data.token}; Path=/; Max-Age=3600;`;
 
       setTimeout(() => {
