@@ -2,7 +2,7 @@
 
 export default async function UsersPage() {
   // Use the correct environment variable for the backend URL
-  const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/users`, { cache: 'no-store' });
+  const res = await fetch(`https://website.loca.lt/api/users`, { cache: 'no-store' });
   const data = await res.json();
 
   return (

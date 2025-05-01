@@ -2,7 +2,7 @@
 
 export default async function HomePage() {
     // Fetching from the correct API endpoint
-    const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/users`, {
+    const res = await fetch(`https://website.loca.lt/api/users`, {
       cache: 'no-store',
     });
   
