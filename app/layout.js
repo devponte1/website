@@ -1,9 +1,8 @@
-// app/layout.js
 'use client';
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import jwt_decode from 'jwt-decode';
+import jwt_decode from 'jwt-decode';  // Default import, should work for most versions
 
 export default function Layout({ children }) {
   const router = useRouter();
@@ -14,7 +13,7 @@ export default function Layout({ children }) {
     // Check if there's a token in cookies
     const token = document.cookie.split('; ').find(row => row.startsWith('token='));
     if (token) {
-      const decodedToken = jwt_decode(token.split('=')[1]);
+      const decodedToken = jwt_decode(token.split('=')[1]);  // Using default import
       setUsername(decodedToken.username);
       setIsLoggedIn(true);
     }
