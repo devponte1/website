@@ -24,14 +24,16 @@ export default function SignupPage() {
     const data = await res.json();
 
     if (res.ok) {
-      setStatus('Account created! Logging in...');
-      
-      // Store the token in cookies
-      document.cookie = `token=${data.token}; Path=/; Max-Age=3600;`;
+      if (!data.token) {
+        setStatus('Account created but no token returned');
+        return;
+      }
 
-      setTimeout(() => {
-        router.push('/');
-      }, 1000);
+      // Store the token in cookies (secure & path-wide)
+      document.cookie = `token=${data.token}; Path=/; Max-Age=3600; SameSite=Strict;`;
+
+      setStatus('Account created! Redirecting...');
+      router.push('/'); // Immediately go to home
     } else {
       setStatus(data.error || 'Error creating account');
     }

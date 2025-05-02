@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import jwt_decode from 'jwt-decode';  // Default import, should work for most versions
+import { jwtDecode } from 'jwt-decode';
 
 export default function Layout({ children }) {
   const router = useRouter();
@@ -10,17 +10,19 @@ export default function Layout({ children }) {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   useEffect(() => {
-    // Check if there's a token in cookies
     const token = document.cookie.split('; ').find(row => row.startsWith('token='));
     if (token) {
-      const decodedToken = jwt_decode(token.split('=')[1]);  // Using default import
-      setUsername(decodedToken.username);
-      setIsLoggedIn(true);
+      try {
+        const decodedToken = jwtDecode(token.split('=')[1]);
+        setUsername(decodedToken.username);
+        setIsLoggedIn(true);
+      } catch (err) {
+        console.error('Invalid token:', err);
+      }
     }
   }, []);
 
   const handleLogout = () => {
-    // Clear the token cookie and redirect to login page
     document.cookie = 'token=; Max-Age=-1; Path=/;';
     setIsLoggedIn(false);
     setUsername(null);
