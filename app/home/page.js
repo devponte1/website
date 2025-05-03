@@ -22,7 +22,7 @@ export default async function HomePage() {
     return (
       <div>
         <h1>Home</h1>
-        
+
         <h2>Every user on this website</h2>
         <ul id="userboard">
           {users.length > 0 ? (
@@ -32,7 +32,7 @@ export default async function HomePage() {
           ) : (
             <p>No users found.</p>
           )}
-        </ul>
+        </ul> 
       </div>
     );
   }

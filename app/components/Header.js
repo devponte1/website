@@ -40,7 +40,7 @@ export default function Header() {
     document.cookie = 'token=; Max-Age=-1; Path=/;';
     setIsLoggedIn(false);
     setUsername(null);
-    router.push('/login');
+    router.push('/');
   };
 
   const hideHeader = pathname === '/login' || pathname === '/signup';
