@@ -1,17 +1,31 @@
-// app/api/signup/route.js
 import mysql from 'mysql2/promise';
 import jwt from 'jsonwebtoken';
 
 // MySQL connection pool
 const pool = mysql.createPool({
-  host: process.env.MYSQL_HOST,  // Use '127.0.0.1' for local
-  user: process.env.MYSQL_USER,  // 'root' or your MySQL username
-  password: process.env.MYSQL_PASSWORD,  // Your MySQL password
-  database: process.env.MYSQL_DATABASE,  // Your MySQL database name
+  host: process.env.MYSQL_HOST,
+  user: process.env.MYSQL_USER,
+  password: process.env.MYSQL_PASSWORD,
+  database: process.env.MYSQL_DATABASE,
   waitForConnections: true,
   connectionLimit: 10,
   queueLimit: 0,
 });
+
+// CORS headers helper
+const corsHeaders = {
+  'Access-Control-Allow-Origin': 'https://website1-nb2ornuve-devponte1s-projects.vercel.app',  // <-- your frontend
+  'Access-Control-Allow-Methods': 'POST, OPTIONS',
+  'Access-Control-Allow-Headers': 'Content-Type',
+  'Access-Control-Allow-Credentials': 'true',   // if you ever want cookies to pass between frontend-backend
+};
+
+export async function OPTIONS() {
+  return new Response(null, {
+    status: 204,
+    headers: corsHeaders,
+  });
+}
 
 export async function POST(req) {
   const { username, password } = await req.json();
@@ -22,7 +36,13 @@ export async function POST(req) {
     if (existingUser.length > 0) {
       return new Response(
         JSON.stringify({ error: 'Username already exists' }),
-        { status: 400 }
+        {
+          status: 400,
+          headers: {
+            ...corsHeaders,
+            'Content-Type': 'application/json',
+          },
+        }
       );
     }
 
@@ -42,6 +62,7 @@ export async function POST(req) {
       {
         status: 200,
         headers: {
+          ...corsHeaders,
           'Content-Type': 'application/json',
           'Set-Cookie': `token=${token}; HttpOnly; Path=/; Max-Age=3600; SameSite=Strict;`,
         },
@@ -50,7 +71,13 @@ export async function POST(req) {
   } catch (err) {
     return new Response(
       JSON.stringify({ error: `Database error: ${err.message}` }),
-      { status: 500 }
+      {
+        status: 500,
+        headers: {
+          ...corsHeaders,
+          'Content-Type': 'application/json',
+        },
+      }
     );
   }
 }
