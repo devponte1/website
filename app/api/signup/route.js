@@ -12,22 +12,34 @@ const pool = mysql.createPool({
   queueLimit: 0,
 });
 
-// CORS headers helper
-const corsHeaders = {
-  'Access-Control-Allow-Origin': 'https://website1-devponte1s-projects.vercel.app',  // <-- your frontend
-  'Access-Control-Allow-Methods': 'POST, OPTIONS',
-  'Access-Control-Allow-Headers': 'Content-Type',
-  'Access-Control-Allow-Credentials': 'true',   // if you ever want cookies to pass between frontend-backend
-};
+// Allowed frontend origins
+const allowedOrigins = [
+  'https://website1-devponte1s-projects.vercel.app',
 
-export async function OPTIONS() {
+// <-- add more domains as needed
+];
+
+// Dynamically generate CORS headers
+function getCorsHeaders(origin) {
+  return {
+    'Access-Control-Allow-Origin': allowedOrigins.includes(origin) ? origin : '',
+    'Access-Control-Allow-Methods': 'POST, OPTIONS',
+    'Access-Control-Allow-Headers': 'Content-Type',
+    'Access-Control-Allow-Credentials': 'true',
+  };
+}
+
+export async function OPTIONS(req) {
+  const origin = req.headers.get('Origin');
   return new Response(null, {
     status: 204,
-    headers: corsHeaders,
+    headers: getCorsHeaders(origin),
   });
 }
 
 export async function POST(req) {
+  const origin = req.headers.get('Origin');
+  const corsHeaders = getCorsHeaders(origin);
   const { username, password } = await req.json();
 
   try {
