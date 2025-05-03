@@ -31,10 +31,16 @@ export default function UserPage({ params }) {
     return <div>Loading...</div>;
   }
 
-  // Check if join_date is null or empty and handle accordingly
-  const joinDate = userData.join_date
-    ? new Date(userData.join_date).toLocaleDateString()  // Format the date to "DD MM YYYY"
-    : 'Unknown';  // Display 'Unknown' if join_date is null or empty
+  // Check if join_date is valid, else handle accordingly
+  let joinDate = 'Unknown'; // Default if join_date is missing
+
+  if (userData.join_date) {
+    const parsedDate = new Date(userData.join_date);
+    // If the parsed date is valid, format it
+    if (!isNaN(parsedDate)) {
+      joinDate = parsedDate.toLocaleDateString(); // Format the date to "DD MM YYYY"
+    }
+  }
 
   return (
     <div>
