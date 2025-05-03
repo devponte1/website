@@ -16,8 +16,9 @@ function getOrigin(req) {
 }
 
 export async function GET(req, context) {
-  const { params } = context; // Make sure to get params from context
-  const { username } = params; // Now username will be available
+  // Await params as the future-proof solution
+  const params = await context.params;  // ✅ Await context.params to avoid warning
+  const { username } = params;  // Now username will be available
   
   const origin = getOrigin(req);
 

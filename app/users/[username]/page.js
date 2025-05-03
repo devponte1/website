@@ -36,7 +36,6 @@ export default function UserPage({ params }) {
   return (
     <div>
       <h1>{userData.username}</h1>
-      <p>Email: {userData.email}</p>
       <p>Join Date: {userData.joinDate}</p>
     </div>
   );
