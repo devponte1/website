@@ -43,6 +43,7 @@ export default function Header() {
     router.push('/');
   };
 
+  
   const hideHeader = pathname === '/login' || pathname === '/signup';
   if (hideHeader) return null;
 
