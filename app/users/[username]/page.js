@@ -36,7 +36,7 @@ export default function UserPage({ params }) {
   return (
     <div>
       <h1>{userData.username}</h1>
-      <p>Join Date: {userData.joinDate}</p>
+      <p>Join Date: {userData.join_date}</p>
     </div>
   );
 }
