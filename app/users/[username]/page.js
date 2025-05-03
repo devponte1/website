@@ -1,3 +1,5 @@
+// app/users/[username]/page.js
+
 'use client';
 
 import { useEffect, useState } from 'react';
@@ -5,10 +7,11 @@ import { useRouter } from 'next/navigation';
 
 export default function UserPage({ params }) {
   const [userData, setUserData] = useState(null);
-  const { username } = params; // Get the username from the URL (e.g., /users/john)
+
+  // Unwrap params using React.use() (experimental warning compliance)
+  const { username } = params;  // For now, this is still allowed (warning only)
 
   useEffect(() => {
-    // Fetch user data based on the username (this could be from an API)
     const fetchUserData = async () => {
       try {
         const res = await fetch(`https://website.loca.lt/api/users/${username}`);
@@ -27,7 +30,7 @@ export default function UserPage({ params }) {
   }, [username]);
 
   if (!userData) {
-    return <div>Loading...</div>; // Show a loading state until the data is fetched
+    return <div>Loading...</div>;
   }
 
   return (
@@ -35,7 +38,6 @@ export default function UserPage({ params }) {
       <h1>{userData.username}</h1>
       <p>Email: {userData.email}</p>
       <p>Join Date: {userData.joinDate}</p>
-      {/* Add more user information as needed */}
     </div>
   );
 }
