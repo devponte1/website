@@ -14,7 +14,7 @@ const pool = mysql.createPool({
 
 // CORS headers helper
 const corsHeaders = {
-  'Access-Control-Allow-Origin': 'https://website1-nb2ornuve-devponte1s-projects.vercel.app',  // <-- your frontend
+  'Access-Control-Allow-Origin': 'https://website1-devponte1s-projects.vercel.app',  // <-- your frontend
   'Access-Control-Allow-Methods': 'POST, OPTIONS',
   'Access-Control-Allow-Headers': 'Content-Type',
   'Access-Control-Allow-Credentials': 'true',   // if you ever want cookies to pass between frontend-backend
