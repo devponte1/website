@@ -8,39 +8,53 @@ export default function UserPage({ params }) {
   const [username, setUsername] = useState(null);
 
   useEffect(() => {
+    // Use React.use() to unwrap the params object
+    const fetchUsername = async () => {
+      const unwrappedParams = await params;  // Unwrap the Promise
+      if (unwrappedParams && unwrappedParams.username && !username) {
+        setUsername(unwrappedParams.username); // Set the username state
+      }
+    };
+
+    fetchUsername();
+  }, [params, username]); // Only run when params or username changes
+
+  useEffect(() => {
     const fetchUserData = async () => {
-      try {
-        if (params.username) {
-          setUsername(params.username);
-          const res = await fetch(`https://website.loca.lt/api/users/${params.username}`);
+      if (username) {
+        try {
+          const res = await fetch(`https://website.loca.lt/api/users/${username}`);
           if (res.ok) {
             const data = await res.json();
-            console.log(data); // Check the response for join_date
+            console.log("Fetched User Data:", data); // Log the whole response
             setUserData(data);
           } else {
             console.error('User not found');
           }
+        } catch (err) {
+          console.error('Error fetching user data', err);
         }
-      } catch (err) {
-        console.error('Error fetching user data', err);
       }
     };
 
-    // Using React.use() to unwrap params
-    if (params && params.username) {
-      fetchUserData();
+    if (username) {
+      fetchUserData(); // Fetch user data once username is set
     }
-  }, [params]); // Add params as a dependency
+  }, [username]); // Only run when username changes
 
   if (!userData) {
     return <div>Loading...</div>;
   }
 
-  // Check if join_date is valid, else handle accordingly
-  let joinDate = 'Unknown'; // Default if join_date is missing
+  // Debug: Log the joinDate directly to check its value
+  console.log("Join Date:", userData.joinDate); // Corrected field name
 
-  if (userData.join_date) {
-    const parsedDate = new Date(userData.join_date);
+  // Check if joinDate is valid, else handle accordingly
+  let joinDate = 'Unknown'; // Default if joinDate is missing
+
+  if (userData.joinDate) {
+    const parsedDate = new Date(userData.joinDate); // Corrected field name
+    console.log("Parsed Date:", parsedDate); // Log parsed date to check format
     // If the parsed date is valid, format it
     if (!isNaN(parsedDate)) {
       joinDate = parsedDate.toLocaleDateString(); // Format the date to "DD MM YYYY"
