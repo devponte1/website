@@ -31,10 +31,10 @@ export default function UserPage({ params }) {
     return <div>Loading...</div>;
   }
 
-  // Format join date to show only DD-MM-YYYY
+  // Check if join_date is null or empty and handle accordingly
   const joinDate = userData.join_date
-    ? new Date(userData.join_date).toLocaleDateString('en-GB') // en-GB format will be DD/MM/YYYY
-    : 'Unknown';
+    ? new Date(userData.join_date).toLocaleDateString()  // Format the date to "DD MM YYYY"
+    : 'Unknown';  // Display 'Unknown' if join_date is null or empty
 
   return (
     <div>
