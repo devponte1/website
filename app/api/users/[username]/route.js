@@ -46,8 +46,7 @@ export async function GET(req, context) {
     return new Response(
       JSON.stringify({
         username: user.username,
-        email: user.email, // Example additional data
-        joinDate: user.join_date, // Example additional data
+        joinDate: user.join_date, // Join date will be returned as is (NULL or actual date)
       }),
       {
         status: 200,
