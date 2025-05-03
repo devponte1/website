@@ -1,3 +1,5 @@
+// app/api/users/[username]/route.js
+
 import mysql from 'mysql2/promise';
 
 const allowedOrigins = [
