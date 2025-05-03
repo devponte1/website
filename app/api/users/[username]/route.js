@@ -13,8 +13,10 @@ function getOrigin(req) {
   return null;
 }
 
-export async function GET(req, { params }) {
-  const { username } = params;
+export async function GET(req, context) {
+  const { params } = context; // Make sure to get params from context
+  const { username } = params; // Now username will be available
+  
   const origin = getOrigin(req);
 
   try {
