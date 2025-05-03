@@ -1,4 +1,3 @@
-// app/api/login/route.js
 import mysql from 'mysql2/promise';
 import jwt from 'jsonwebtoken';
 
@@ -21,14 +20,15 @@ export async function POST(req) {
     }
 
     // Create JWT token
-    const token = jwt.sign({ userId: users[0].id, username: users[0].username }, process.env.JWT_SECRET, { expiresIn: '1h' });
+    const token = jwt.sign(
+      { userId: users[0].id, username: users[0].username },
+      process.env.JWT_SECRET,
+      { expiresIn: '1h' }
+    );
 
     return new Response(
       JSON.stringify({ success: true, token }),
-      {
-        status: 200,
-        headers: { 'Content-Type': 'application/json', 'Set-Cookie': `token=${token}; HttpOnly; Path=/; Max-Age=3600;` }
-      }
+      { status: 200, headers: { 'Content-Type': 'application/json' } }
     );
   } catch (err) {
     return new Response(JSON.stringify({ error: err.message }), { status: 500 });

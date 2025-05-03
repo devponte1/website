@@ -8,15 +8,14 @@ import { jwtDecode } from 'jwt-decode';
 export default function Header() {
   const router = useRouter();
   const pathname = usePathname();
-
   const [username, setUsername] = useState(null);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
-  useEffect(() => {
+  const checkAuth = () => {
     const tokenCookie = document.cookie.split('; ').find(row => row.startsWith('token='));
     if (tokenCookie) {
       try {
-        const token = tokenCookie.split('=')[1];
+        const token = decodeURIComponent(tokenCookie.split('=')[1]);
         const decodedToken = jwtDecode(token);
         setUsername(decodedToken.username);
         setIsLoggedIn(true);
@@ -29,6 +28,13 @@ export default function Header() {
       setIsLoggedIn(false);
       setUsername(null);
     }
+  };
+
+  useEffect(() => {
+    checkAuth();
+
+    const interval = setInterval(checkAuth, 1000); // Still ok for now
+    return () => clearInterval(interval);
   }, []);
 
   const handleLogout = () => {

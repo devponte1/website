@@ -1,4 +1,3 @@
-// app/login/page.js
 'use client';
 
 import { useState } from 'react';
@@ -25,7 +24,7 @@ export default function LoginPage() {
     if (res.ok) {
       setStatus('Logged in!');
 
-      // Store the token in cookies
+      // Store the token in cookies (client-side)
       document.cookie = `token=${data.token}; Path=/; Max-Age=3600;`;
 
       setTimeout(() => {
