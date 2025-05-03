@@ -32,8 +32,7 @@ export default function Header() {
 
   useEffect(() => {
     checkAuth();
-
-    const interval = setInterval(checkAuth, 1000); // Still ok for now
+    const interval = setInterval(checkAuth, 1000);
     return () => clearInterval(interval);
   }, []);
 
@@ -48,15 +47,16 @@ export default function Header() {
   if (hideHeader) return null;
 
   return (
-    <header>
+    <header style={{ display: 'flex', justifyContent: 'flex-end', padding: '10px' }}>
       {isLoggedIn ? (
         <div>
-          <p>Logged in as {username}</p>
+          <p style={{ display: 'inline', marginRight: '10px' }}>Logged in as {username}</p>
           <button onClick={handleLogout}>Log Out</button>
         </div>
       ) : (
         <div>
-          <Link href="/login">Login</Link> | <Link href="/signup">Sign Up</Link>
+          <Link href="/login" style={{ marginRight: '10px' }}>Login</Link>
+          <Link href="/signup">Sign Up</Link>
         </div>
       )}
     </header>

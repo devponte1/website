@@ -22,8 +22,7 @@ export default async function HomePage() {
     return (
       <div>
         <h1>Home</h1>
-        <a href="/signup">Sign Up</a>
-  
+        
         <h2>Every user on this website</h2>
         <ul id="userboard">
           {users.length > 0 ? (
