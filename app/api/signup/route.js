@@ -2,26 +2,23 @@
 import mysql from 'mysql2/promise';
 import jwt from 'jsonwebtoken';
 
-// Create pool once (reuse for all requests)
+// MySQL connection pool
 const pool = mysql.createPool({
-  host: process.env.MYSQL_HOST,   // MySQL host
-  user: process.env.MYSQL_USER,   // MySQL user
-  password: process.env.MYSQL_PASSWORD,   // MySQL password
-  database: process.env.MYSQL_DATABASE,   // MySQL database name
+  host: process.env.MYSQL_HOST,  // Use '127.0.0.1' for local
+  user: process.env.MYSQL_USER,  // 'root' or your MySQL username
+  password: process.env.MYSQL_PASSWORD,  // Your MySQL password
+  database: process.env.MYSQL_DATABASE,  // Your MySQL database name
   waitForConnections: true,
   connectionLimit: 10,
   queueLimit: 0,
 });
 
-console.log('Connecting to DB host:', process.env.MYSQL_HOST); //TEST!!!!!!
-
 export async function POST(req) {
   const { username, password } = await req.json();
 
   try {
-    // Use pool.query directly for DB interaction
+    // Check if username exists
     const [existingUser] = await pool.query('SELECT id FROM users WHERE username = ?', [username]);
-
     if (existingUser.length > 0) {
       return new Response(
         JSON.stringify({ error: 'Username already exists' }),
@@ -29,7 +26,7 @@ export async function POST(req) {
       );
     }
 
-    // Insert new user into the database
+    // Insert new user
     const [result] = await pool.query('INSERT INTO users (username, password) VALUES (?, ?)', [username, password]);
 
     // Create JWT token
@@ -39,6 +36,7 @@ export async function POST(req) {
       { expiresIn: '1h' }
     );
 
+    // Return response with token
     return new Response(
       JSON.stringify({ success: true, token }),
       {
@@ -50,7 +48,6 @@ export async function POST(req) {
       }
     );
   } catch (err) {
-    // Handle DB or other errors
     return new Response(
       JSON.stringify({ error: `Database error: ${err.message}` }),
       { status: 500 }

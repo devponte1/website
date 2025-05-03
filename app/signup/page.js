@@ -1,5 +1,4 @@
 // app/signup/page.js
-
 'use client';
 
 import { useState } from 'react';
@@ -15,7 +14,7 @@ export default function SignupPage() {
     e.preventDefault();
     setStatus('Creating account...');
 
-    const res = await fetch(`/api/signup`, {
+    const res = await fetch(`website.loca.lt/api/signup`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ username, password }),
@@ -29,11 +28,11 @@ export default function SignupPage() {
         return;
       }
 
-      // Store the token in cookies (secure & path-wide)
+      // Store token in cookies
       document.cookie = `token=${data.token}; Path=/; Max-Age=3600; SameSite=Strict;`;
 
       setStatus('Account created! Redirecting...');
-      router.push('/'); // Immediately go to home
+      router.push('/'); // Redirect to homepage
     } else {
       setStatus(data.error || 'Error creating account');
     }
