@@ -15,8 +15,7 @@ const pool = mysql.createPool({
 // Allowed frontend origins
 const allowedOrigins = [
   'https://website1-devponte1s-projects.vercel.app',
-
-// <-- add more domains as needed
+  // <-- add more domains as needed
 ];
 
 // Dynamically generate CORS headers
@@ -58,8 +57,11 @@ export async function POST(req) {
       );
     }
 
-    // Insert new user
-    const [result] = await pool.query('INSERT INTO users (username, password) VALUES (?, ?)', [username, password]);
+    // Insert new user with the full timestamp as join_date
+    const [result] = await pool.query(
+      'INSERT INTO users (username, password, join_date) VALUES (?, ?, NOW())',
+      [username, password]
+    );
 
     // Create JWT token
     const token = jwt.sign(

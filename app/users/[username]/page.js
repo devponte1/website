@@ -31,11 +31,15 @@ export default function UserPage({ params }) {
     return <div>Loading...</div>;
   }
 
+  // Format join date to show only DD-MM-YYYY
+  const joinDate = userData.join_date
+    ? new Date(userData.join_date).toLocaleDateString('en-GB') // en-GB format will be DD/MM/YYYY
+    : 'Unknown';
+
   return (
     <div>
       <h1>{userData.username}</h1>
-      <p>Join Date: {userData.join_date ? new Date(userData.join_date).toLocaleString() : 'not availabe'}</p>
+      <p>Join Date: {joinDate}</p>
     </div>
   );
-  
 }
