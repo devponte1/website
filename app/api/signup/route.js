@@ -13,6 +13,8 @@ const pool = mysql.createPool({
   queueLimit: 0,
 });
 
+console.log('Connecting to DB host:', process.env.MYSQL_HOST); //TEST!!!!!!
+
 export async function POST(req) {
   const { username, password } = await req.json();
 
