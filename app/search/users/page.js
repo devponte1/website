@@ -1,61 +1,67 @@
+// app/search/users/page.js (example usage)
+
 'use client';
 
-import { useState, useEffect } from 'react';
-import { useSearchParams } from 'next/navigation'; // Use the search params hook
-import { Suspense } from 'react'; // Import Suspense for async boundaries
+import { useState } from 'react';
 
-// Component that handles the search logic
-function SearchComponent() {
-  const searchParams = useSearchParams();
-  const keyword = searchParams.get('keyword'); // Get the keyword from the search params
-
+export default function SearchUsersPage() {
+  const [keyword, setKeyword] = useState('');
   const [users, setUsers] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
 
-  useEffect(() => {
-    if (keyword) {
-      // Start loading when the keyword is available
-      const fetchData = async () => {
-        try {
-          const res = await fetch(`/api/search/users?keyword=${encodeURIComponent(keyword)}`);
-          const data = await res.json();
-          setUsers(data.users); // Set the users returned by the API
-        } catch (error) {
-          console.error("Error fetching users:", error);
-        } finally {
-          setLoading(false);
+  async function handleSearch(e) {
+    e.preventDefault();
+    setLoading(true);
+    setError('');
+    setUsers([]);
+
+    try {
+      const res = await fetch(`/api/search/users?keyword=${encodeURIComponent(keyword)}`);
+      const data = await res.json();
+
+      if (res.ok) {
+        if (Array.isArray(data.users)) {
+          setUsers(data.users);
+        } else {
+          setError('Invalid response format.');
         }
-      };
-
-      fetchData();
+      } else {
+        setError(data.error || 'API error occurred.');
+      }
+    } catch (err) {
+      console.error('Fetch error:', err);
+      setError('Failed to fetch users.');
+    } finally {
+      setLoading(false);
     }
-  }, [keyword]); // Re-run when the keyword changes
-
-  if (loading) {
-    return <div>Loading users...</div>; // Display loading message while fetching
-  }
-
-  if (!users.length) {
-    return <div>No users found for "{keyword}"</div>; // If no users are found
   }
 
   return (
     <div>
-      <h1>Search Results for: "{keyword}"</h1>
-      <ul>
-        {users.map((user) => (
-          <li key={user.id}>{user.username}</li>
-        ))}
-      </ul>
-    </div>
-  );
-}
+      <form onSubmit={handleSearch}>
+        <input
+          type="text"
+          value={keyword}
+          onChange={(e) => setKeyword(e.target.value)}
+          placeholder="Search users..."
+        />
+        <button type="submit" disabled={loading}>
+          {loading ? 'Searching...' : 'Search'}
+        </button>
+      </form>
 
-// Main page component wrapped in Suspense
-export default function SearchPage() {
-  return (
-    <Suspense fallback={<div>Loading search results...</div>}>
-      <SearchComponent /> {/* Render the SearchComponent */}
-    </Suspense>
+      {error && <p style={{ color: 'red' }}>{error}</p>}
+
+      {users.length > 0 ? (
+        <ul>
+          {users.map((user) => (
+            <li key={user.id}>{user.username}</li>
+          ))}
+        </ul>
+      ) : (
+        !loading && <p>No users found.</p>
+      )}
+    </div>
   );
 }

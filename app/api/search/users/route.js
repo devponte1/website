@@ -1,3 +1,4 @@
+// app/api/search/users/route.js
 import mysql from 'mysql2/promise';
 
 const allowedOrigins = [
@@ -12,21 +13,11 @@ function getOrigin(req) {
   return null;
 }
 
-export async function GET(req) {
-  const { searchParams } = new URL(req.url);
-  const keyword = searchParams.get('keyword');
+export async function GET(req, context) {
+  const urlObj = new URL(req.url);
+  const keyword = urlObj.searchParams.get('keyword') || '';  // Always default to '' if null
 
   const origin = getOrigin(req);
-
-  if (!keyword) {
-    return new Response(JSON.stringify({ error: 'Missing keyword parameter' }), {
-      status: 400,
-      headers: {
-        'Content-Type': 'application/json',
-        ...(origin && { 'Access-Control-Allow-Origin': origin }),
-      },
-    });
-  }
 
   try {
     const db = await mysql.createConnection({
@@ -36,27 +27,36 @@ export async function GET(req) {
       database: process.env.MYSQL_DATABASE,
     });
 
+    // Query users matching the keyword
     const [users] = await db.query(
       'SELECT * FROM users WHERE username LIKE ?',
       [`%${keyword}%`]
     );
 
-    await db.end(); // always close connection
+    await db.end();  // Cleanly close connection
 
-    return new Response(JSON.stringify({ users }), {
-      status: 200,
-      headers: {
-        'Content-Type': 'application/json',
-        ...(origin && { 'Access-Control-Allow-Origin': origin }),
-      },
-    });
+    return new Response(
+      JSON.stringify({ users }), 
+      {
+        status: 200,
+        headers: {
+          'Content-Type': 'application/json',
+          ...(origin && { 'Access-Control-Allow-Origin': origin }),
+        },
+      }
+    );
   } catch (err) {
-    return new Response(JSON.stringify({ error: err.message }), {
-      status: 500,
-      headers: {
-        'Content-Type': 'application/json',
-        ...(origin && { 'Access-Control-Allow-Origin': origin }),
-      },
-    });
+    console.error('Database error:', err);  // Log full error
+
+    return new Response(
+      JSON.stringify({ error: err.message }), 
+      {
+        status: 500,
+        headers: {
+          'Content-Type': 'application/json',
+          ...(origin && { 'Access-Control-Allow-Origin': origin }),
+        },
+      }
+    );
   }
 }
