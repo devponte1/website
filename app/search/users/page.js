@@ -1,58 +1,61 @@
-// app/search/users/page.js
-
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useSearchParams } from 'next/navigation';
-import Link from 'next/link';
+import { useSearchParams } from 'next/navigation'; // Use the search params hook
+import { Suspense } from 'react'; // Import Suspense for async boundaries
 
-export default function SearchPage() {
+// Component that handles the search logic
+function SearchComponent() {
   const searchParams = useSearchParams();
-  const keyword = searchParams.get('keyword') || '';
-  const [results, setResults] = useState([]);
+  const keyword = searchParams.get('keyword'); // Get the keyword from the search params
+
+  const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    async function fetchResults() {
-      setLoading(true);
-      try {
-        const res = await fetch(`https://website.loca.lt/api/search/users?keyword=${encodeURIComponent(keyword)}`);
-        const data = await res.json();
-        setResults(data);
-      } catch (err) {
-        console.error('Failed to fetch search results:', err);
-        setResults([]);
-      } finally {
-        setLoading(false);
-      }
-    }
+    if (keyword) {
+      // Start loading when the keyword is available
+      const fetchData = async () => {
+        try {
+          const res = await fetch(`/api/search/users?keyword=${encodeURIComponent(keyword)}`);
+          const data = await res.json();
+          setUsers(data.users); // Set the users returned by the API
+        } catch (error) {
+          console.error("Error fetching users:", error);
+        } finally {
+          setLoading(false);
+        }
+      };
 
-    if (keyword.trim() !== '') {
-      fetchResults();
-    } else {
-      setResults([]);
-      setLoading(false);
+      fetchData();
     }
-  }, [keyword]);
+  }, [keyword]); // Re-run when the keyword changes
+
+  if (loading) {
+    return <div>Loading users...</div>; // Display loading message while fetching
+  }
+
+  if (!users.length) {
+    return <div>No users found for "{keyword}"</div>; // If no users are found
+  }
 
   return (
     <div>
-      <h1>Search Results for "{keyword}"</h1>
-      {loading ? (
-        <p>Loading...</p>
-      ) : results.length === 0 ? (
-        <p>No matching users found.</p>
-      ) : (
-        <ul>
-          {results.map((user) => (
-            <li key={user.username}>
-              <Link href={`/users/${user.username}`}>
-                {user.username} (Joined: {user.join_date ? new Date(user.join_date).toLocaleDateString() : 'Unknown'})
-              </Link>
-            </li>
-          ))}
-        </ul>
-      )}
+      <h1>Search Results for: "{keyword}"</h1>
+      <ul>
+        {users.map((user) => (
+          <li key={user.id}>{user.username}</li>
+        ))}
+      </ul>
     </div>
+  );
+}
+
+// Main page component wrapped in Suspense
+export default function SearchPage() {
+  return (
+    <Suspense fallback={<div>Loading search results...</div>}>
+      <SearchComponent /> {/* Render the SearchComponent */}
+    </Suspense>
   );
 }

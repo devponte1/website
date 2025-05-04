@@ -1,10 +1,7 @@
-// app/api/search/users/route.js
-
-import pool from '@/lib/db';
+import mysql from 'mysql2/promise';
 
 const allowedOrigins = [
   'https://website1-devponte1s-projects.vercel.app',
-  // Add more domains here if needed
 ];
 
 function getOrigin(req) {
@@ -16,13 +13,13 @@ function getOrigin(req) {
 }
 
 export async function GET(req) {
-  const origin = getOrigin(req);
-
   const { searchParams } = new URL(req.url);
   const keyword = searchParams.get('keyword');
 
+  const origin = getOrigin(req);
+
   if (!keyword) {
-    return new Response(JSON.stringify({ error: 'Keyword is required' }), {
+    return new Response(JSON.stringify({ error: 'Missing keyword parameter' }), {
       status: 400,
       headers: {
         'Content-Type': 'application/json',
@@ -32,16 +29,21 @@ export async function GET(req) {
   }
 
   try {
-    const db = await pool.getConnection();
+    const db = await mysql.createConnection({
+      host: process.env.MYSQL_HOST,
+      user: process.env.MYSQL_USER,
+      password: process.env.MYSQL_PASSWORD,
+      database: process.env.MYSQL_DATABASE,
+    });
 
     const [users] = await db.query(
-      'SELECT username, join_date FROM users WHERE username LIKE ?',
+      'SELECT * FROM users WHERE username LIKE ?',
       [`%${keyword}%`]
     );
 
-    db.release();
+    await db.end(); // always close connection
 
-    return new Response(JSON.stringify(users), {
+    return new Response(JSON.stringify({ users }), {
       status: 200,
       headers: {
         'Content-Type': 'application/json',
