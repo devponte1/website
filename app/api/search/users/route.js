@@ -1,4 +1,4 @@
-import pool from '../../lib/db';  // Import the connection pool
+import pool from '@/lib/db';  // Correct import for the connection pool
 
 const allowedOrigins = [
   'https://website1-devponte1s-projects.vercel.app',
