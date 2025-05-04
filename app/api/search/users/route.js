@@ -13,9 +13,26 @@ function getOrigin(req) {
   return null;
 }
 
-export async function GET(req, context) {
+function corsHeaders(origin) {
+  return {
+    'Content-Type': 'application/json',
+    ...(origin && { 'Access-Control-Allow-Origin': origin }),
+    'Access-Control-Allow-Methods': 'GET, OPTIONS',
+    'Access-Control-Allow-Headers': 'Content-Type',
+  };
+}
+
+export async function OPTIONS(req) {
+  const origin = getOrigin(req);
+  return new Response(null, {
+    status: 204,
+    headers: corsHeaders(origin),
+  });
+}
+
+export async function GET(req) {
   const urlObj = new URL(req.url);
-  const keyword = urlObj.searchParams.get('keyword') || '';  // Always default to '' if null
+  const keyword = urlObj.searchParams.get('keyword') || '';
 
   const origin = getOrigin(req);
 
@@ -27,36 +44,23 @@ export async function GET(req, context) {
       database: process.env.MYSQL_DATABASE,
     });
 
-    // Query users matching the keyword
     const [users] = await db.query(
       'SELECT * FROM users WHERE username LIKE ?',
       [`%${keyword}%`]
     );
 
-    await db.end();  // Cleanly close connection
+    await db.end();
 
-    return new Response(
-      JSON.stringify({ users }), 
-      {
-        status: 200,
-        headers: {
-          'Content-Type': 'application/json',
-          ...(origin && { 'Access-Control-Allow-Origin': origin }),
-        },
-      }
-    );
+    return new Response(JSON.stringify({ users }), {
+      status: 200,
+      headers: corsHeaders(origin),
+    });
   } catch (err) {
-    console.error('Database error:', err);  // Log full error
+    console.error('Database error:', err);
 
-    return new Response(
-      JSON.stringify({ error: err.message }), 
-      {
-        status: 500,
-        headers: {
-          'Content-Type': 'application/json',
-          ...(origin && { 'Access-Control-Allow-Origin': origin }),
-        },
-      }
-    );
+    return new Response(JSON.stringify({ error: err.message }), {
+      status: 500,
+      headers: corsHeaders(origin),
+    });
   }
 }
