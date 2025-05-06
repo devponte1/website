@@ -30,7 +30,7 @@ export async function POST(req) {
     const [users] = await db.query('SELECT * FROM users WHERE username = ?', [username]);
 
     if (users.length === 0 || users[0].password !== password) {
-      return new Response(JSON.stringify({ error: 'Invalid credentials' }), {
+      return new Response(JSON.stringify({ error: 'incorrect username or password. try again' }), {
         status: 400,
         headers: {
           'Content-Type': 'application/json',

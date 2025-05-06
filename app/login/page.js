@@ -11,7 +11,7 @@ export default function LoginPage() {
 
   async function handleSubmit(e) {
     e.preventDefault();
-    setStatus('Logging in...');
+    setStatus('logging in...');
 
     const res = await fetch(`https://website.loca.lt/api/login`, {
       method: 'POST',
@@ -22,7 +22,7 @@ export default function LoginPage() {
     const data = await res.json();
 
     if (res.ok) {
-      setStatus('Logged in!');
+      setStatus('logged in!');
 
       // Store the token in cookies (client-side)
       document.cookie = `token=${data.token}; Path=/; Max-Age=3600;`;
@@ -41,19 +41,19 @@ export default function LoginPage() {
       <form onSubmit={handleSubmit}>
         <input
           type="text"
-          placeholder="Enter username"
+          placeholder="enter username"
           value={username}
           onChange={(e) => setUsername(e.target.value)}
           required
         />
         <input
           type="password"
-          placeholder="Enter password"
+          placeholder="enter password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           required
         />
-        <button type="submit">Log In</button>
+        <button type="submit">log in</button>
       </form>
       <p>{status}</p>
     </div>

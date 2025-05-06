@@ -1,12 +1,14 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
-import Head from 'next/head';  // Import Head from next/head
+import { useRouter } from 'next/navigation';  // Import useRouter from next/navigation
+import { notFound } from 'next/navigation';  // Import notFound from next/navigation
+import Head from 'next/head';
 
 export default function UserPage({ params }) {
   const [userData, setUserData] = useState(null);
   const [username, setUsername] = useState(null);
+  const router = useRouter();  // Initialize the router
 
   useEffect(() => {
     const fetchUsername = async () => {
@@ -29,10 +31,12 @@ export default function UserPage({ params }) {
             console.log("Fetched User Data:", data); // Log the whole response
             setUserData(data);
           } else {
-            console.error('User not found');
+            console.log('User not found');
+            notFound();
           }
         } catch (err) {
           console.error('Error fetching user data', err);
+          router.push('/not-found');  // Redirect to the default 404 page if there’s an error
         }
       }
     };
@@ -40,17 +44,17 @@ export default function UserPage({ params }) {
     if (username) {
       fetchUserData(); // Fetch user data once username is set
     }
-  }, [username]);
+  }, [username, router]); // Add router to dependencies to avoid stale closures
 
   if (!userData) {
-    return <div>Loading...</div>;
+    return <div>loading...</div>;
   }
 
   // Debug: Log the joinDate directly to check its value
-  console.log("Join Date:", userData.joinDate); // Corrected field name
+  console.log("join date:", userData.joinDate); // Corrected field name
 
   // Check if joinDate is valid, else handle accordingly
-  let joinDate = 'Unknown'; // Default if joinDate is missing
+  let joinDate = 'not set'; // Default if joinDate is missing
 
   if (userData.joinDate) {
     const parsedDate = new Date(userData.joinDate); // Corrected field name

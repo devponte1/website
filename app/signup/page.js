@@ -12,29 +12,43 @@ export default function SignupPage() {
 
   async function handleSubmit(e) {
     e.preventDefault();
-    setStatus('Creating account...');
+    setStatus('creating account...');
 
+    // Call signup API
     const res = await fetch(`https://website.loca.lt/api/signup`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ username, password }),
       credentials: 'include',
     });
-    
 
     const data = await res.json();
 
     if (res.ok) {
       if (!data.token) {
-        setStatus('Account created but no token returned');
-        return;
+        setStatus('account created! logging you in...');
+      } else {
+        // In case your signup API also returns token (redundant safety)
+        localStorage.setItem('token', data.token);
       }
 
-      // Store token in cookies
-      document.cookie = `token=${data.token}; Path=/; Max-Age=3600; SameSite=Strict;`;
+      // Now auto login
+      const loginRes = await fetch(`https://website.loca.lt/api/login`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username, password }),
+        credentials: 'include',
+      });
 
-      setStatus('Account created! Redirecting...');
-      router.push('/'); // Redirect to homepage
+      const loginData = await loginRes.json();
+
+      if (loginRes.ok && loginData.token) {
+        localStorage.setItem('token', loginData.token);
+        setStatus('Account created & Logged in! redirecting...');
+        router.push('/');
+      } else {
+        setStatus('Account created, but auto-login failed. Please log in manually.');
+      }
     } else {
       setStatus(data.error || 'Error creating account');
     }
@@ -46,19 +60,19 @@ export default function SignupPage() {
       <form onSubmit={handleSubmit}>
         <input
           type="text"
-          placeholder="Enter username"
+          placeholder="enter username"
           value={username}
           onChange={(e) => setUsername(e.target.value)}
           required
         />
         <input
           type="password"
-          placeholder="Enter password"
+          placeholder="enter password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           required
         />
-        <button type="submit">Create Account</button>
+        <button type="submit">create account</button>
       </form>
       <p>{status}</p>
     </div>
