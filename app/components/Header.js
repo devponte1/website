@@ -11,7 +11,6 @@ export default function Header() {
   const [username, setUsername] = useState(null);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
-  const [isServerOffline, setIsServerOffline] = useState(false);
 
   const checkAuth = () => {
     const tokenCookie = document.cookie.split('; ').find(row => row.startsWith('token='));
@@ -32,25 +31,9 @@ export default function Header() {
     }
   };
 
-  const checkServer = async () => {
-    try {
-      const response = await fetch('/api/ping', { cache: 'no-store' });
-      if (!response.ok) throw new Error('Server error');
-      setIsServerOffline(false);
-    } catch (err) {
-      setIsServerOffline(true);
-    }
-  };
-
   useEffect(() => {
     checkAuth();
-    checkServer();
-
-    const interval = setInterval(() => {
-      checkAuth();
-      checkServer();
-    }, 5000); // every 5 seconds
-
+    const interval = setInterval(checkAuth, 1000);
     return () => clearInterval(interval);
   }, []);
 
@@ -74,75 +57,58 @@ export default function Header() {
   if (hideHeader) return null;
 
   return (
-    <>
-      {isServerOffline && (
-        <div style={{
-          position: 'fixed',
-          top: 0,
-          left: 0,
-          right: 0,
-          backgroundColor: 'orange',
-          color: 'white',
-          textAlign: 'center',
-          padding: '5px',
-          zIndex: 1100
-        }}>
-          ⚠️ the server is offline.
-        </div>
-      )}
+  <header style={{
+    position: 'fixed',
+    top: 0,
+    left: 0,
+    right: 0,
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    padding: '5px 15px',   // Reduced padding = slimmer bar
+    backgroundColor: '#fff',
+    borderBottom: '1px solid #ccc',
+    zIndex: 1000
+  }}>
 
-      <header style={{
-        position: 'fixed',
-        top: isServerOffline ? '30px' : '0',
-        left: 0,
-        right: 0,
-        display: 'flex',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        padding: '5px 15px',
-        backgroundColor: '#fff',
-        borderBottom: '1px solid #ccc',
-        zIndex: 1000
-      }}>
-        {/* Left side: Home link */}
-        <Link href="/" style={{ textDecoration: 'none', fontWeight: 'bold' }}>Home</Link>
+      {/* Left side: Home link */}
+      <Link href="/" style={{ textDecoration: 'none', fontWeight: 'bold' }}>home</Link>
 
-        {/* Center: Search Bar */}
-        <form onSubmit={handleSearch} style={{ flexGrow: 1, display: 'flex', justifyContent: 'center' }}>
-          <input
-            type="text"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="Search users..."
-            style={{
-              width: '30%',
+      {/* Center: Search Bar */}
+      <form onSubmit={handleSearch} style={{ flexGrow: 1, display: 'flex', justifyContent: 'center' }}>
+        <input
+          type="text"
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          placeholder="search users"
+          style={{
+            width: '30%',
+            padding: '4px 8px',
+            fontSize: '14px',
+            borderRadius: '4px',
+            border: '1px solid #ccc'
+          }}
+        />
+      </form>
+
+      {/* Right side: Auth buttons */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+        {isLoggedIn ? (
+          <>
+            <span style={{ fontSize: '14px' }}>logged in as <strong>{username}</strong></span>
+            <button onClick={handleLogout} style={{
               padding: '4px 8px',
               fontSize: '14px',
-              borderRadius: '4px',
-              border: '1px solid #ccc'
-            }}
-          />
-        </form>
-
-        {/* Right side: Auth buttons */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-          {isLoggedIn ? (
-            <>
-              <span style={{ fontSize: '14px' }}>Logged in as <strong>{username}</strong></span>
-              <button onClick={handleLogout} style={{
-                padding: '4px 8px',
-                fontSize: '14px',
-                cursor: 'pointer'
-              }}>Log Out</button>
-            </>
-          ) : (
-            <>
-              <Link href="/login" style={{ textDecoration: 'none', fontSize: '14px' }}>Login</Link>
-              <Link href="/signup" style={{ textDecoration: 'none', fontSize: '14px' }}>Sign Up</Link>
-            </>
-          )}
-        </div>
-      </header>
-    </>
+              cursor: 'pointer'
+            }}>log out</button>
+          </>
+        ) : (
+          <>
+            <Link href="/login" style={{ textDecoration: 'none', fontSize: '14px' }}>log in</Link>
+            <Link href="/signup" style={{ textDecoration: 'none', fontSize: '14px' }}>sign up</Link>
+          </>
+        )}
+      </div>
+    </header>
   );
 }
