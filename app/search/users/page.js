@@ -1,67 +1,70 @@
-// app/search/users/page.js (example usage)
-
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
 
-export default function SearchUsersPage() {
-  const [keyword, setKeyword] = useState('');
-  const [users, setUsers] = useState([]);
-  const [error, setError] = useState('');
-  const [loading, setLoading] = useState(false);
+export default function UserPage({ params }) {
+  const [userData, setUserData] = useState(null);
+  const [username, setUsername] = useState(null);
 
-  async function handleSearch(e) {
-    e.preventDefault();
-    setLoading(true);
-    setError('');
-    setUsers([]);
-
-    try {
-      const res = await fetch(`/api/search/users?keyword=${encodeURIComponent(keyword)}`);
-      const data = await res.json();
-
-      if (res.ok) {
-        if (Array.isArray(data.users)) {
-          setUsers(data.users);
-        } else {
-          setError('Invalid response format.');
-        }
-      } else {
-        setError(data.error || 'API error occurred.');
+  useEffect(() => {
+    // Use React.use() to unwrap the params object
+    const fetchUsername = async () => {
+      const unwrappedParams = await params;  // Unwrap the Promise
+      if (unwrappedParams && unwrappedParams.username && !username) {
+        setUsername(unwrappedParams.username); // Set the username state
       }
-    } catch (err) {
-      console.error('Fetch error:', err);
-      setError('Failed to fetch users.');
-    } finally {
-      setLoading(false);
+    };
+
+    fetchUsername();
+  }, [params, username]); // Only run when params or username changes
+
+  useEffect(() => {
+    const fetchUserData = async () => {
+      if (username) {
+        try {
+          const res = await fetch(`https://website.loca.lt/api/users/${username}`);
+          if (res.ok) {
+            const data = await res.json();
+            console.log("Fetched User Data:", data); // Log the whole response
+            setUserData(data);
+          } else {
+            console.error('User not found');
+          }
+        } catch (err) {
+          console.error('Error fetching user data', err);
+        }
+      }
+    };
+
+    if (username) {
+      fetchUserData(); // Fetch user data once username is set
+    }
+  }, [username]); // Only run when username changes
+
+  if (!userData) {
+    return <div>Loading...</div>;
+  }
+
+  // Debug: Log the joinDate directly to check its value
+  console.log("Join Date:", userData.joinDate); // Corrected field name
+
+  // Check if joinDate is valid, else handle accordingly
+  let joinDate = 'Unknown'; // Default if joinDate is missing
+
+  if (userData.joinDate) {
+    const parsedDate = new Date(userData.joinDate); // Corrected field name
+    console.log("Parsed Date:", parsedDate); // Log parsed date to check format
+    // If the parsed date is valid, format it
+    if (!isNaN(parsedDate)) {
+      joinDate = parsedDate.toLocaleDateString(); // Format the date to "DD MM YYYY"
     }
   }
 
   return (
     <div>
-      <form onSubmit={handleSearch}>
-        <input
-          type="text"
-          value={keyword}
-          onChange={(e) => setKeyword(e.target.value)}
-          placeholder="Search users..."
-        />
-        <button type="submit" disabled={loading}>
-          {loading ? 'Searching...' : 'Search'}
-        </button>
-      </form>
-
-      {error && <p style={{ color: 'red' }}>{error}</p>}
-
-      {users.length > 0 ? (
-        <ul>
-          {users.map((user) => (
-            <li key={user.id}>{user.username}</li>
-          ))}
-        </ul>
-      ) : (
-        !loading && <p>No users found.</p>
-      )}
+      <h1>{userData.username}</h1>
+      <p>Join Date: {joinDate}</p>
     </div>
   );
 }

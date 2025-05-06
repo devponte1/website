@@ -1,9 +1,10 @@
-// app/api/search/users/route.js
+// app/api/users/[username]/route.js
 
 import mysql from 'mysql2/promise';
 
 const allowedOrigins = [
   'https://website1-devponte1s-projects.vercel.app',
+  'http://localhost:3000'
   // Add more domains here if needed
 ];
 
@@ -16,23 +17,10 @@ function getOrigin(req) {
 }
 
 export async function GET(req, context) {
-  const url = new URL(req.url);
-  const keyword = url.searchParams.get('keyword');  // ✅ Extract keyword from query param
-
-  // Prevent empty search query
-  if (!keyword || keyword.trim() === '') {
-    return new Response(
-      JSON.stringify({ users: [] }),
-      {
-        status: 200,
-        headers: {
-          'Content-Type': 'application/json',
-          ...(getOrigin(req) && { 'Access-Control-Allow-Origin': getOrigin(req) }), // Allow CORS if origin is valid
-        },
-      }
-    );
-  }
-
+  // Await params as the future-proof solution
+  const params = await context.params;  // ✅ Await context.params to avoid warning
+  const { username } = params;  // Now username will be available
+  
   const origin = getOrigin(req);
 
   try {
@@ -43,10 +31,24 @@ export async function GET(req, context) {
       database: process.env.MYSQL_DATABASE,
     });
 
-    const [users] = await db.query('SELECT * FROM users WHERE username LIKE ?', [`%${keyword}%`]);
+    const [users] = await db.query('SELECT * FROM users WHERE username = ?', [username]);
 
+    if (users.length === 0) {
+      return new Response(JSON.stringify({ error: 'User not found' }), {
+        status: 404,
+        headers: {
+          'Content-Type': 'application/json',
+          ...(origin && { 'Access-Control-Allow-Origin': origin }), // Allow CORS if origin is valid
+        },
+      });
+    }
+
+    const user = users[0];
     return new Response(
-      JSON.stringify({ users }),  // Always return users array (even if empty)
+      JSON.stringify({
+        username: user.username,
+        joinDate: user.join_date, // Join date will be returned as is (NULL or actual date)
+      }),
       {
         status: 200,
         headers: {

@@ -9,8 +9,8 @@ export default async function HomePage() {
   if (!res.ok) {
     return (
       <div>
-        <h1>Error</h1>
-        <p>Failed to load users data.</p>
+        <h1>Home</h1> {/* Keep "Home" heading */}
+        <p>failed to load users - server might be offile</p>
       </div>
     );
   }
@@ -20,9 +20,11 @@ export default async function HomePage() {
 
   return (
     <div>
-      <h1>Home</h1>
+      
+      <title>Home</title>
 
-      <h2>Every user on this website</h2>
+      <h1>Home</h1>
+      <h2>every user on this website</h2>
       <ul id="userboard">
         {users.length > 0 ? (
           users.map((u) => (

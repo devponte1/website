@@ -2,11 +2,12 @@
 
 body {
   font-family: Arial, sans-serif;
-  padding: 20px;
+  padding: 70px 20px 20px 20px; /* top padding now accounts for header height */
   background-color: #ffffff;
   margin: 0;
   color: #000;
 }
+
 
 h1 {
   color: #000;

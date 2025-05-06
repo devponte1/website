@@ -2,13 +2,13 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import Head from 'next/head';  // Import Head from next/head
 
 export default function UserPage({ params }) {
   const [userData, setUserData] = useState(null);
   const [username, setUsername] = useState(null);
 
   useEffect(() => {
-    // Use React.use() to unwrap the params object
     const fetchUsername = async () => {
       const unwrappedParams = await params;  // Unwrap the Promise
       if (unwrappedParams && unwrappedParams.username && !username) {
@@ -17,7 +17,7 @@ export default function UserPage({ params }) {
     };
 
     fetchUsername();
-  }, [params, username]); // Only run when params or username changes
+  }, [params, username]);
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -40,7 +40,7 @@ export default function UserPage({ params }) {
     if (username) {
       fetchUserData(); // Fetch user data once username is set
     }
-  }, [username]); // Only run when username changes
+  }, [username]);
 
   if (!userData) {
     return <div>Loading...</div>;

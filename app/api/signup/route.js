@@ -15,6 +15,7 @@ const pool = mysql.createPool({
 // Allowed frontend origins
 const allowedOrigins = [
   'https://website1-devponte1s-projects.vercel.app',
+  'http://localhost:3000'
   // <-- add more domains as needed
 ];
 

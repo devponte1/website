@@ -3,8 +3,7 @@ import './globals.css';
 import Header from './components/Header';
 
 export const metadata = {
-  title: 'My App',
-  description: 'Next.js 14 Auth App',
+  description: 'a Next.js web app',  // You can keep the description if needed
 };
 
 export default function RootLayout({ children }) {

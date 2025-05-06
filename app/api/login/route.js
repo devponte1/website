@@ -3,6 +3,7 @@ import jwt from 'jsonwebtoken';
 
 const allowedOrigins = [
   'https://website1-devponte1s-projects.vercel.app',
+  'http://localhost:3000'
   // Add more domains here if needed
 ];
 
