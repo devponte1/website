@@ -1,4 +1,3 @@
-// app/components/ProfileButton.js
 'use client';
 
 import { useRouter } from 'next/navigation';
@@ -10,10 +9,9 @@ export default function ProfileButton() {
   const [username, setUsername] = useState(null);
 
   useEffect(() => {
-    const tokenCookie = document.cookie.split('; ').find(row => row.startsWith('token='));
-    if (tokenCookie) {
+    const token = localStorage.getItem('token');
+    if (token) {
       try {
-        const token = decodeURIComponent(tokenCookie.split('=')[1]);
         const decodedToken = jwtDecode(token);
         setUsername(decodedToken.username);
       } catch (err) {

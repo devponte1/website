@@ -13,10 +13,9 @@ export default function Header() {
   const [searchQuery, setSearchQuery] = useState('');
 
   const checkAuth = () => {
-    const tokenCookie = document.cookie.split('; ').find(row => row.startsWith('token='));
-    if (tokenCookie) {
+    const token = localStorage.getItem('token');
+    if (token) {
       try {
-        const token = decodeURIComponent(tokenCookie.split('=')[1]);
         const decodedToken = jwtDecode(token);
         setUsername(decodedToken.username);
         setIsLoggedIn(true);
@@ -38,7 +37,7 @@ export default function Header() {
   }, []);
 
   const handleLogout = () => {
-    document.cookie = 'token=; Max-Age=-1; Path=/;';
+    localStorage.removeItem('token');
     setIsLoggedIn(false);
     setUsername(null);
     router.push('/');
@@ -57,19 +56,19 @@ export default function Header() {
   if (hideHeader) return null;
 
   return (
-  <header style={{
-    position: 'fixed',
-    top: 0,
-    left: 0,
-    right: 0,
-    display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    padding: '5px 15px',   // Reduced padding = slimmer bar
-    backgroundColor: '#fff',
-    borderBottom: '1px solid #ccc',
-    zIndex: 1000
-  }}>
+    <header style={{
+      position: 'fixed',
+      top: 0,
+      left: 0,
+      right: 0,
+      display: 'flex',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      padding: '5px 15px',
+      backgroundColor: '#fff',
+      borderBottom: '1px solid #ccc',
+      zIndex: 1000
+    }}>
 
       {/* Left side: Home link */}
       <Link href="/" style={{ textDecoration: 'none', fontWeight: 'bold' }}>home</Link>

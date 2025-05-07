@@ -19,35 +19,24 @@ export default function SignupPage() {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ username, password }),
-      credentials: 'include',
+      credentials: 'include',  // Important for cookies to be sent
     });
 
     const data = await res.json();
 
     if (res.ok) {
-      if (!data.token) {
-        setStatus('account created! logging you in...');
-      } else {
-        // In case your signup API also returns token (redundant safety)
-        localStorage.setItem('token', data.token);
-      }
+      setStatus('account created! logging you in...');
 
-      // Now auto login
-      const loginRes = await fetch(`https://website.loca.lt/api/login`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ username, password }),
-        credentials: 'include',
-      });
+      // Here you do NOT need to call login explicitly. The cookie from the signup API should log you in.
 
-      const loginData = await loginRes.json();
+      // Optionally check if the token is stored
+      const token = document.cookie.replace(/(?:(?:^|.*;\s*)token\s*\=\s*([^;]*).*$)|^.*$/, "$1");
 
-      if (loginRes.ok && loginData.token) {
-        localStorage.setItem('token', loginData.token);
-        setStatus('Account created & Logged in! redirecting...');
+      if (token) {
+        setStatus('account created & logged in! redirecting...');
         router.push('/');
       } else {
-        setStatus('Account created, but auto-login failed. Please log in manually.');
+        setStatus('account created, but login failed. Please log in manually and please contact The Dev.');
       }
     } else {
       setStatus(data.error || 'Error creating account');

@@ -3,7 +3,7 @@ import jwt from 'jsonwebtoken';
 
 const allowedOrigins = [
   'https://website1-devponte1s-projects.vercel.app',
-  'http://localhost:3000'
+  'http://localhost:3000',
   // Add more domains here if needed
 ];
 
@@ -30,7 +30,7 @@ export async function POST(req) {
     const [users] = await db.query('SELECT * FROM users WHERE username = ?', [username]);
 
     if (users.length === 0 || users[0].password !== password) {
-      return new Response(JSON.stringify({ error: 'incorrect username or password. try again' }), {
+      return new Response(JSON.stringify({ error: 'Invalid credentials' }), {
         status: 400,
         headers: {
           'Content-Type': 'application/json',
@@ -39,6 +39,7 @@ export async function POST(req) {
       });
     }
 
+    // Generate JWT token
     const token = jwt.sign(
       { userId: users[0].id, username: users[0].username },
       process.env.JWT_SECRET,
@@ -66,7 +67,7 @@ export async function POST(req) {
   }
 }
 
-// Handle preflight OPTIONS request
+// Handle preflight OPTIONS request for CORS
 export async function OPTIONS(req) {
   const origin = getOrigin(req);
 

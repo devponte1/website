@@ -20,17 +20,18 @@ export default function LoginPage() {
     });
 
     const data = await res.json();
+    console.log('Response from backend:', data);
 
-    if (res.ok) {
+    if (res.ok && data.token) {
+      console.log('Storing token:', data.token);
+      localStorage.setItem('token', data.token); // store token safely
+
       setStatus('logged in!');
-
-      // Store the token in cookies (client-side)
-      document.cookie = `token=${data.token}; Path=/; Max-Age=3600;`;
-
       setTimeout(() => {
         router.push('/');
       }, 1000);
     } else {
+      console.error('Login failed:', data.error);
       setStatus(data.error || 'Error logging in');
     }
   }
@@ -41,6 +42,7 @@ export default function LoginPage() {
       <form onSubmit={handleSubmit}>
         <input
           type="text"
+          name="username"
           placeholder="enter username"
           value={username}
           onChange={(e) => setUsername(e.target.value)}
@@ -48,6 +50,7 @@ export default function LoginPage() {
         />
         <input
           type="password"
+          name="password"
           placeholder="enter password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
