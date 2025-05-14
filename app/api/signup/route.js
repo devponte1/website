@@ -1,5 +1,6 @@
 import mysql from 'mysql2/promise';
 import jwt from 'jsonwebtoken';
+import { getOrigin, getCorsHeaders, buildCookie } from '@/lib/corsAndCookie';
 
 // MySQL connection pool
 const pool = mysql.createPool({
@@ -12,51 +13,34 @@ const pool = mysql.createPool({
   queueLimit: 0,
 });
 
-// Allowed frontend origins
-const allowedOrigins = [
-  'https://website1-devponte1s-projects.vercel.app',
-  'http://localhost:3000',
-
-// <-- add more domains as needed
-];
-
-// Dynamically generate CORS headers
-function getCorsHeaders(origin) {
-  return {
-    'Access-Control-Allow-Origin': allowedOrigins.includes(origin) ? origin : '',
-    'Access-Control-Allow-Methods': 'POST, OPTIONS',
-    'Access-Control-Allow-Headers': 'Content-Type',
-    'Access-Control-Allow-Credentials': 'true',
-  };
-}
-
 export async function OPTIONS(req) {
-  const origin = req.headers.get('Origin');
-  return new Response(null, {
+  const origin = getOrigin(req);
+  return new Response('{}', {
     status: 204,
-    headers: getCorsHeaders(origin),
+    headers: {
+      ...getCorsHeaders(origin),
+      'Content-Type': 'application/json',
+    },
   });
 }
 
 export async function POST(req) {
-  const origin = req.headers.get('Origin');
-  const corsHeaders = getCorsHeaders(origin);
+  const origin = getOrigin(req);
   const { username, password } = await req.json();
+  
+  console.log('POST request received with:', { username, password });
 
   try {
     // Check if username exists
     const [existingUser] = await pool.query('SELECT id FROM users WHERE username = ?', [username]);
     if (existingUser.length > 0) {
-      return new Response(
-        JSON.stringify({ error: 'Username already exists' }),
-        {
-          status: 400,
-          headers: {
-            ...corsHeaders,
-            'Content-Type': 'application/json',
-          },
-        }
-      );
+      return new Response(JSON.stringify({ error: 'Username already exists' }), {
+        status: 400,
+        headers: {
+          ...getCorsHeaders(origin),
+          'Content-Type': 'application/json',
+        },
+      });
     }
 
     // Insert new user
@@ -69,28 +53,27 @@ export async function POST(req) {
       { expiresIn: '1h' }
     );
 
-    // Return response with token
-    return new Response(
-      JSON.stringify({ success: true, token }),
-      {
-        status: 200,
-        headers: {
-          ...corsHeaders,
-          'Content-Type': 'application/json',
-          'Set-Cookie': `token=${token}; HttpOnly; Path=/; Max-Age=3600; SameSite=Strict;`,
-        },
-      }
-    );
+    
+    const cookieHeader = buildCookie(token, true); // Add 'true' to ensure secure cookies
+
+
+    return new Response(JSON.stringify({ success: true }), {
+      status: 200,
+      headers: {
+        ...getCorsHeaders(origin),
+        'Set-Cookie': cookieHeader,
+        'Content-Type': 'application/json',
+      },
+    });
+
   } catch (err) {
-    return new Response(
-      JSON.stringify({ error: `Database error: ${err.message}` }),
-      {
-        status: 500,
-        headers: {
-          ...corsHeaders,
-          'Content-Type': 'application/json',
-        },
-      }
-    );
+    console.error('Error occurred during sign-up:', err);
+    return new Response(JSON.stringify({ error: `Database error: ${err.message}` }), {
+      status: 500,
+      headers: {
+        ...getCorsHeaders(origin),
+        'Content-Type': 'application/json',
+      },
+    });
   }
 }

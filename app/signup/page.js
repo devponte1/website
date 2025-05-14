@@ -10,38 +10,54 @@ export default function SignupPage() {
   const [password, setPassword] = useState('');
   const [status, setStatus] = useState('');
 
-  async function handleSubmit(e) {
-    e.preventDefault();
-    setStatus('creating account...');
 
-    // Call signup API
+
+ async function handleSubmit(e) {
+  e.preventDefault();
+  setStatus('creating account...');
+
+  try {
+    // First, call the signup API to create the user
     const res = await fetch(`https://website.loca.lt/api/signup`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ username, password }),
-      credentials: 'include',  // Important for cookies to be sent
+      credentials: 'include', // Important: allows sending/receiving cookies
     });
 
-    const data = await res.json();
+    let data = {};
+    const text = await res.text();
+    if (text) data = JSON.parse(text);
 
     if (res.ok) {
-      setStatus('account created! logging you in...');
+      setStatus('account created! logging in...');
 
-      // Here you do NOT need to call login explicitly. The cookie from the signup API should log you in.
+      // After account creation, login the user by calling the login API
+      const loginRes = await fetch(`https://website.loca.lt/api/login`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username, password }),
+        credentials: 'include', // Important: allows sending/receiving cookies
+      });
 
-      // Optionally check if the token is stored
-      const token = document.cookie.replace(/(?:(?:^|.*;\s*)token\s*\=\s*([^;]*).*$)|^.*$/, "$1");
-
-      if (token) {
+      if (loginRes.ok) {
         setStatus('account created & logged in! redirecting...');
         router.push('/');
+        router.refresh();        // <-- THIS TRIGGERS UI UPDATE
       } else {
-        setStatus('account created, but login failed. Please log in manually and please contact The Dev.');
+        setStatus('auto-login failed. Please log in manually.');
       }
     } else {
       setStatus(data.error || 'Error creating account');
     }
+  } catch (err) {
+    setStatus('Network or server error: ' + err.message);
+    console.error(err);
   }
+}
+
+  
+  
 
   return (
     <div>

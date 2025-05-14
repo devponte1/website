@@ -7,32 +7,46 @@ export default function LoginPage() {
   const router = useRouter();
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-  const [status, setStatus] = useState('');
+  const [status, setStatus] = useState('');  // Track status: success or error
 
   async function handleSubmit(e) {
     e.preventDefault();
     setStatus('logging in...');
 
-    const res = await fetch(`https://website.loca.lt/api/login`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ username, password }),
-    });
+    try {
+      const res = await fetch(`https://website.loca.lt/api/login`, {
+        method: 'POST',
+        headers: { 
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ username, password }),
+        credentials: 'include', // Important: allows sending/receiving cookies
+      });
 
-    const data = await res.json();
-    console.log('Response from backend:', data);
+      const text = await res.text();
+      let data = {};
+      if (text) data = JSON.parse(text);
 
-    if (res.ok && data.token) {
-      console.log('Storing token:', data.token);
-      localStorage.setItem('token', data.token); // store token safely
+      if (res.ok) {
+        setStatus('logged in! redirecting...');
+        
+        // After login, check if we have a valid user session
+        const meRes = await fetch(`https://website.loca.lt/api/me`, {
+          credentials: 'include', // Include cookies to check the user session
+        });
 
-      setStatus('logged in!');
-      setTimeout(() => {
-        router.push('/');
-      }, 1000);
-    } else {
-      console.error('Login failed:', data.error);
-      setStatus(data.error || 'Error logging in');
+        if (meRes.ok) {
+          setStatus('logged in! redirecting...');
+          router.push('/');
+        } else {
+          setStatus('auto-login failed. Please log in again.');
+        }
+      } else {
+        setStatus(data.error || 'Invalid login credentials');
+      }
+    } catch (err) {
+      setStatus('Network or server error: ' + err.message);
+      console.error(err);
     }
   }
 
@@ -43,7 +57,7 @@ export default function LoginPage() {
         <input
           type="text"
           name="username"
-          placeholder="enter username"
+          placeholder="Enter username"
           value={username}
           onChange={(e) => setUsername(e.target.value)}
           required
@@ -51,14 +65,14 @@ export default function LoginPage() {
         <input
           type="password"
           name="password"
-          placeholder="enter password"
+          placeholder="Enter password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           required
         />
-        <button type="submit">log in</button>
+        <button type="submit">Log in</button>
       </form>
-      <p>{status}</p>
+      <p>{status}</p>  {/* Display status messages */}
     </div>
   );
 }

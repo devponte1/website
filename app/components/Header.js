@@ -1,47 +1,24 @@
 'use client';
 
-import { useState, useEffect } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import Link from 'next/link';
-import { jwtDecode } from 'jwt-decode';
+import { useState } from 'react';
+import { useAuth } from '@/hooks/useAuth';
 
 export default function Header() {
   const router = useRouter();
   const pathname = usePathname();
-  const [username, setUsername] = useState(null);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const { username, isLoggedIn } = useAuth(true); // Poll every second
   const [searchQuery, setSearchQuery] = useState('');
 
-  const checkAuth = () => {
-    const token = localStorage.getItem('token');
-    if (token) {
-      try {
-        const decodedToken = jwtDecode(token);
-        setUsername(decodedToken.username);
-        setIsLoggedIn(true);
-      } catch (err) {
-        console.error('Invalid token:', err);
-        setIsLoggedIn(false);
-        setUsername(null);
-      }
-    } else {
-      setIsLoggedIn(false);
-      setUsername(null);
-    }
-  };
+const handleLogout = async () => {
+  await fetch('https://website.loca.lt/api/logout', { method: 'POST', credentials: 'include' });
 
-  useEffect(() => {
-    checkAuth();
-    const interval = setInterval(checkAuth, 1000);
-    return () => clearInterval(interval);
-  }, []);
+  // Refresh the UI after logging out
+  router.push('/');
+  router.refresh();
+};
 
-  const handleLogout = () => {
-    localStorage.removeItem('token');
-    setIsLoggedIn(false);
-    setUsername(null);
-    router.push('/');
-  };
 
   const handleSearch = (e) => {
     e.preventDefault();
@@ -69,11 +46,8 @@ export default function Header() {
       borderBottom: '1px solid #ccc',
       zIndex: 1000
     }}>
-
-      {/* Left side: Home link */}
       <Link href="/" style={{ textDecoration: 'none', fontWeight: 'bold' }}>home</Link>
 
-      {/* Center: Search Bar */}
       <form onSubmit={handleSearch} style={{ flexGrow: 1, display: 'flex', justifyContent: 'center' }}>
         <input
           type="text"
@@ -90,7 +64,6 @@ export default function Header() {
         />
       </form>
 
-      {/* Right side: Auth buttons */}
       <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
         {isLoggedIn ? (
           <>
