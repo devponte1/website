@@ -15,7 +15,7 @@ const pool = mysql.createPool({
 
 export async function OPTIONS(req) {
   const origin = getOrigin(req);
-  return new Response('{}', {
+  return new Response(null, {
     status: 204,
     headers: {
       ...getCorsHeaders(origin),
@@ -53,7 +53,7 @@ export async function POST(req) {
       { expiresIn: '1h' }
     );
 
-    
+
     const cookieHeader = buildCookie(token, true); // Add 'true' to ensure secure cookies
 
 
