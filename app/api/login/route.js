@@ -45,6 +45,7 @@ export async function POST(req) {
     
   const cookieHeader = buildCookie(token, true); // 'true' for secure cookie
 
+  console.log('Set-Cookie Header:', cookieHeader); //DEBUG
 
     return new Response(JSON.stringify({ success: true }), {
       status: 200,
